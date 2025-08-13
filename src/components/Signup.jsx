@@ -26,10 +26,9 @@ function Signup() {
     <div className='min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 to-purple-100 p-4'>
       <div className='max-w-md w-full bg-white rounded-lg shadow-2xl p-8 space-y-6'>
         <h2 className='text-3xl font-bold text-center text-gray-800 tracking-wide'>
-          Welcome to ...
+          Welcome to Learnify
         </h2>
-        <h3 className='text-center text-gray-800 tracking-wide'>Join thousands of learners and take the first step towards your future.</h3>
-        <form className='space-y-6' onSubmit={handlesubmit}>
+        <form className='space-y-5' onSubmit={handlesubmit}>
           <div className='space-y-2'>
             <label htmlFor="name" className='block text-sm font-medium text-gray-700'>
               Full Name
@@ -113,8 +112,6 @@ function Signup() {
           </button>
         </form>
         <hr className='border-gray-400' />
-
-        <h4 className='text-gray-400 text-center'>Your journey to knowledge begins here—secure, supportive, and tailored for you.</h4>
 
         <p className='text-center text-sm text-gray-600'>
           Already have an account?{' '}
