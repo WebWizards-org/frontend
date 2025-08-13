@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { GoPerson } from "react-icons/go";
-import { MdOutlineEmail } from "react-icons/md";
-import { MdOutlinePhone } from "react-icons/md";
-import { TbLockPassword } from "react-icons/tb";
+import PersonIcon from '../icons/PersonIcon'
+import EmailIcon from '../icons/EmailIcon'
+import PhoneIcon from '../icons/PhoneIcon'
+import PasswordIcon from '../icons/PasswordIcon'
 
 function Signup() {
     const [name, setname] = useState()
@@ -36,7 +36,7 @@ function Signup() {
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <GoPerson className="h-5 w-5 text-gray-400" />
+                <PersonIcon className="h-5 w-5 text-gray-400" />
               </div>
             <input 
               type="text" 
@@ -55,7 +55,7 @@ function Signup() {
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <MdOutlineEmail className="h-5 w-5 text-gray-400" />
+                <EmailIcon className="h-5 w-5 text-gray-400" />
               </div>
             <input 
               type="email" 
@@ -74,7 +74,7 @@ function Signup() {
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <MdOutlinePhone className="h-5 w-5 text-gray-400" />
+                <PhoneIcon className="h-5 w-5 text-gray-400" />
               </div>
             <input type="number"
             id='number'
@@ -92,7 +92,7 @@ function Signup() {
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <TbLockPassword className="h-5 w-5 text-gray-400" />
+                <PasswordIcon className="h-5 w-5 text-gray-400" />
               </div>
             <input 
               type="password"
