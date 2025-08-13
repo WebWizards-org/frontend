@@ -11,7 +11,6 @@ function Signup() {
     const [email, setemail] = useState()
     const [password, setpassword] = useState()
     const [number, setnumber] = useState()
-
     const navigate = useNavigate()
     
     const handlesubmit = (e)=>{
