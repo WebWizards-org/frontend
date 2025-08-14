@@ -20,7 +20,7 @@ function Signup() {
     const generatepassword=() =>{
       const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
       let newPass = "";
-      for(let i=0;i<6;i++){
+      for(let i=0; i<6; i++){
         newPass += chars.charAt(Math.floor(Math.random() * chars.length));
       }
       setpassword(newPass);
