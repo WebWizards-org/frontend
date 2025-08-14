@@ -4,14 +4,27 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import PasswordIcon from '../icons/PasswordIcon'
 import EmailIcon from '../icons/EmailIcon'
+import EyeIcon from '../icons/EyeIcon'
+import EyeOffIcon from '../icons/EyeOffIcon'
 
 function Login() {
   const [email, setemail] = useState()
   const [password, setpassword] = useState()
+  const [errors, seterrors] = useState({})
+  const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
 
   const handlesubmit = (e)=>{
         e.preventDefault()
+
+        let newerrors = {}
+        if(!email) newerrors.email = "Email is required!"
+        if(!password) newerrors.password = "Password is required!"
+
+        seterrors(newerrors)
+
+        if(Object.keys(newerrors).length > 0) return;
+
         axios.post('http://localhost:3001/login', {email, password})
         .then(result => {
           console.log(result)
@@ -42,10 +55,13 @@ function Login() {
               id="email"
               name='email'
               placeholder='Enter your email'
-              className='w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1B3C53] focus:border-[#1B3C53] outline-none transition duration-150'
+              className={`w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1B3C53] focus:border-[#1B3C53] outline-none transition duration-150'
+                ${errors.email ? 'border-red-600' : 'border-gray-400'}`}
               onChange={(e)=>setemail(e.target.value)}
+              onFocus={() => seterrors(prev => ({...prev, email: ""}))}
             />
             </div>
+            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
           </div>
 
           <div className='space-y-2'>
@@ -57,15 +73,30 @@ function Login() {
                 <PasswordIcon className="h-5 w-5 text-gray-400" />
               </div>
             <input 
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password" 
               name='password'
               placeholder='Enter your password'
-              className='w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1B3C53] focus:border-[#1B3C53] outline-none transition duration-150'
+              value={password}
+              className={`w-full pl-10 pr-12 px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#1B3C53] outline-none transition duration-150 
+                    ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
               onChange={(e)=>setpassword(e.target.value)}
+              onFocus={() => seterrors(prev => ({...prev, password: ""}))}
             />
+            <div 
+              className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <EyeOffIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+              ) : (
+                <EyeIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+              )}
+              </div>
             </div>
-          </div>
+           
+            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+            </div>
 
           <button 
             type='submit' 
