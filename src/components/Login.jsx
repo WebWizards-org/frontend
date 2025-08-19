@@ -105,6 +105,14 @@ function Login() {
             Sign In
           </button>
         </form>
+         <hr className='border-gray-400' />
+        
+                <p className='text-center text-sm text-gray-600'>
+                  Don't have an account?{' '}
+                  <Link to='/register' className='text-[#1B3C53] hover:text-[#0E2148] font-medium'>
+                    Sign Up
+                  </Link>
+                </p>
         </div>
         </div>
   )

@@ -3,9 +3,13 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Signup from './components/Signup.jsx';
 import Login from './components/Login.jsx';
 import Home from './components/home.jsx';
+import YouTubeVideos from './components/Api.jsx';
+import BookSearch from './components/Booksearch.jsx';
+
 function App() {
 
   return (
+    
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Home/>}></Route>
