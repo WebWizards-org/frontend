@@ -39,9 +39,25 @@ export default function Home() {
     }
   ]
 
+  const stats=[
+    {
+      title: "10K+", desc: "Active Students",
+      icon: <Users className="w-15 h-15 text-blue-600" /> 
+    },
+    {
+      title: "500+", desc: "Courses Available",
+      icon: <BookOpen className="w-15 h-15 text-green-600" />
+    },
+    {
+      title: "24/7", desc: "Support Available",
+      icon: <Sparkles className="w-15 h-15 text-pink-600" />
+    }
+  ]
+
   return (
     <>
         <Navbar />
+      <div className='bg-gray-50'>
         <div
           style={{ 
             backgroundImage: `url(${hero})`,
@@ -51,7 +67,7 @@ export default function Home() {
             height: '100vh'
             
          }}
-          className="flex  mt-21 justify-start relative min-h-[580px] bg-cover bg-center bg-no-repeat md:items-start">
+          className="flex mt-21 justify-start relative min-h-[580px] bg-cover bg-center bg-no-repeat md:items-start">
             {/* <div className="absolute inset-0 z-10 bg-black/50 md:bg-transparent"></div> */}
             <div className='w-180 mt-15 ml-10 bg-amber-'>
               <h1 className="relative z-10 mt-15 text-[20px] font-bold md:text-[70px] text-gray-900 sm:text-[40px]">
@@ -62,9 +78,18 @@ export default function Home() {
               <button className='bg-blue-500 text-white x-10 relative px-4 py-3 rounded-xl text-xl font-bold mt-10 hover:bg-blue-600 hover:shadow-xl hover:scale-105 transition-all ease-in-out duration-350'>Get Started</button>
             </div>            
         </div>
-        <br />
-          
-          <div className='text-center mt-10 mb-5'>
+         
+          <div className='Features grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10 bg-white p-15'>
+              {stats.map((val, idx)=>(
+                <div className="text-center">
+                  <div className="text-5xl flex justify-center font-bold text-blue-600 mb-2">{val.icon}</div>
+                  <div className="text-2xl md:text-3xl font-bold text-gray mb-2">{val.title}</div>
+                  <div className="text-gray-500 text-sm">{val.desc}</div>
+                </div>
+              ))}             
+          </div>
+
+          <div className='text-center mt-15 mb-5'>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
                 Everything You Need to Succeed
             </h2>
@@ -75,7 +100,7 @@ export default function Home() {
           <div className='flex justify-center gap-10 flex-wrap m-10 place-content-stretch items-center'>
            
             {features.map((val, idx)=>(
-              <div key={idx} className='w-110 h-65 shadow-[0px_0px_13px_0px_rgba(0,_0,_0,_0.1)] rounded-md text mt-10 p-5 hover:shadow-lg transition-shadow duration-300 ease-in-out'>
+              <div key={idx} className='w-110 bg-white h-65 shadow-[0px_0px_13px_0px_rgba(0,_0,_0,_0.1)] rounded-md text mt-10 p-5 hover:shadow-lg transition-shadow duration-300 ease-in-out'>
                 <div className=''>{val.icon}</div>
                 <h1 className='text-xl font-bold mt-5'>{val.title}</h1>
                 <p className='mt-3'>{val.desc}</p>
@@ -83,14 +108,15 @@ export default function Home() {
             ))}       
           </div>
 
-        <div className='text-center bg-gray-100 p-5'>
-          <div className='bg-green-200 w-[11%] items-center justify-center inline-flex rounded-4xl px-1 py-2 text-green-800'><Award className="w-5 h-5" /> Trusted Platform</div>
+        <div className='text-center bg-white p-5'>
+          <div className='bg-green-200 w-[40%] text-[15px] md:w-[18%] md:text-[20px] sm:w-[30%]  items-center justify-center inline-flex rounded-4xl px-1 py-2 text-green-800 font-semibold'><Award className="w-5 h-5" /> Trusted Platform</div>
           <h1 className='text-4xl font-semibold mt-8'>Learn from Industry <span className='text-blue-500'>Experts</span></h1>
           <p className='opacity-80 mt-4 mb-5'>Our world-class instructors come from top companies and bring real-world experience to every lesson</p>
           <button className='bg-blue-500 text-white x-10 relative px-4 py-3 rounded-xl text-xl font-bold mt-10 hover:bg-blue-600 hover:shadow-xl hover:scale-105 transition-all ease-in-out duration-350'>Start Learning Today</button>
         </div>  
         <br />
       <Footer />
+      </div>
     </>
   );
 }
