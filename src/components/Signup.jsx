@@ -39,7 +39,7 @@ function Signup() {
 
         if(Object.keys(newerrors).length > 0) return;
  
-        axios.post('http://localhost:3001/register', {name, email,number, password})
+        axios.post('http://localhost:3001/register', {name, email, number, password})
         .then(result => {console.log(result)
             navigate('/login')
         })
