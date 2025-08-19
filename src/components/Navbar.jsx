@@ -15,7 +15,7 @@ function Navbar() {
           </div>
 
           <div className='space-x-5 hidden md:flex font-semibold text-[#1B3C53] opacity-90'>
-            <Link>Home</Link>
+            <Link to='/'>Home</Link>
             <Link>Services</Link>
             <Link>About</Link>
             <Link>Contact</Link>
