@@ -105,7 +105,7 @@ export default function Home() {
               </h1>
               <p className='text-gray-600 relative x-10 md:text-xl'>Join thousands of learner mastering new skills with our interactive learning platform. Start your journey today and unlock your potential.</p>
 
-              <button className='bg-blue-500 text-white x-10 relative px-4 py-3 rounded-xl text-xl font-bold mt-10 hover:bg-blue-600 hover:shadow-xl hover:scale-105 transition-all ease-in-out duration-350'>Get Started</button>
+              <Link to='/register' className='bg-blue-500 text-white x-10 relative px-4 py-3 rounded-xl text-xl font-bold mt-10 hover:bg-blue-600 hover:shadow-xl hover:scale-105 transition-all ease-in-out duration-350'>Get Started</Link>
             </div>            
         </div>
          
