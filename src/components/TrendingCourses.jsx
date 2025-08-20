@@ -81,7 +81,7 @@ function App() {
           {data.map((item, index) => (
             <div
               key={index}
-              className="w-80 h-[450px] bg-zinc-100 rounded-md flex flex-col shadow-md"
+              className="w-80 h-[450px] bg-white rounded-md flex flex-col shadow-md"
             >
               <img
                 src={item.image}
