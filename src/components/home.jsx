@@ -152,7 +152,7 @@ export default function Home() {
             <p className='text-[18px] mt-1 font-semibold opacity-60'>Get started in just three simple steps</p>
             <div className='flex justify-center gap-30 mt-20'>
                 {steps.map((val, idx)=>(
-                  
+                   
                   <div className='relative text-center w-90 flex flex-col items-center py-6'>
                     <div className="absolute -top-3 -right-3 bg-blue-600 text-white w-8 h-8 flex items-center justify-center rounded-full font-bold shadow">
                       {val.number}
