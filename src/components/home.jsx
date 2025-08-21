@@ -154,7 +154,8 @@ export default function Home() {
                 {steps.map((val, idx)=>(
                    
                   <div className='relative text-center w-90 flex flex-col items-center py-6'>
-                    <div className="absolute -top-3 -right-3 bg-blue-600 text-white w-8 h-8 flex items-center justify-center rounded-full font-bold shadow">
+                    <div className="absolute -top-3
+                     -right-3 bg-blue-600 text-white w-8 h-8 flex items-center justify-center rounded-full font-bold shadow">
                       {val.number}
                     </div>{val.icon}<h1 className='mb-4 text-3xl font-bold'>{val.title}</h1><p className='text-[15px]'>{val.desc}</p>
                   </div>
