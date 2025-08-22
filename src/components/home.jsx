@@ -3,8 +3,11 @@ import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import hero from "../assets/HERO.jpg";
 import Footer from "./Footer";
-import {
-  BookOpen,
+import genai from '../assets/generativeai.png'
+import cyber from '../assets/cybersecurity.png'
+import cloud from '../assets/cloudcomputing.png'
+import fullstack from '../assets/fullstack.png'
+import { BookOpen,
   BarChart2,
   Video,
   Smartphone,
@@ -90,17 +93,17 @@ export default function Home() {
   ];
 
   const slides = [
-    "https://images.pexels.com/photos/1485894/pexels-photo-1485894.jpeg",
-    "https://images.pexels.com/photos/20630783/pexels-photo-20630783.jpeg",
-    "https://images.pexels.com/photos/1366957/pexels-photo-1366957.jpeg",
-    "https://images.pexels.com/photos/19233481/pexels-photo-19233481.jpeg",
+    genai,
+    cyber,
+    cloud,
+    fullstack,
   ];
 
-  const [current, setcurrent] = useState(0);
+  const [current, setCurrent] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setcurrent((prev) => (prev + 1) % slides.length);
+      setCurrent((prev) => (prev + 1) % slides.length);
     }, 3000);
     return () => clearInterval(interval);
   }, [slides.length]);
@@ -121,7 +124,7 @@ export default function Home() {
         >
           {/* <div className="absolute inset-0 z-10 bg-black/50 md:bg-transparent"></div> */}
           <div className="w-140 mt-15 mx-10 ">
-            <h1 className="relative z-10 mt-25 text-[20px] font-bold md:text-[50px] text-gray-900 sm:text-[40px]">
+            <h1 className="relative z-10 mt-35 text-[20px] font-bold md:text-[50px] text-gray-900 sm:text-[40px]">
               LEARN ANYTIME,{" "}
               <span className="text-blue-700">GROW ANYWHERE</span>
             </h1>
@@ -178,7 +181,7 @@ export default function Home() {
           {features.map((val, idx) => (
             <div
               key={idx}
-              className="w-110 bg-white h-65 shadow-[0px_0px_13px_0px_rgba(0,_0,_0,_0.1)] rounded-md text mt-10 p-5 hover:shadow-lg transition-shadow duration-300 ease-in-out"
+              className="w-[280px] bg-white h-[260px] shadow-[0px_0px_13px_0px_rgba(0,_0,_0,_0.1)] rounded-md text mt-10 p-5 hover:shadow-lg transition-shadow duration-300 ease-in-out"
             >
               <div className="">{val.icon}</div>
               <h1 className="text-xl font-bold mt-5">{val.title}</h1>
@@ -188,7 +191,7 @@ export default function Home() {
         </div>
 
         <div className="text-center bg-white py-12 ">
-          <div className="bg-green-200 w-[40%] text-[15px] md:w-[18%] md:text-[20px] sm:w-[30%]  items-center justify-center inline-flex rounded-4xl px-1 py-2 text-green-800 font-semibold">
+          <div className="bg-green-200 w-[40%] text-[15px] md:w-[18%] md:text-[20px] sm:w-[30%] items-center justify-center inline-flex rounded-full px-1 py-2 text-green-800 font-semibold">
             <Award className="w-5 h-5" /> Trusted Platform
           </div>
           <h1 className="text-4xl font-semibold mt-8">
@@ -203,7 +206,7 @@ export default function Home() {
           </button>
         </div>
 
-        <div className="relative w-full h-[500px] overflow-hidden shadow-lg my-12">
+        <div className="relative w-full h-[600px] overflow-hidden shadow-lg my-12">
           {slides.map((img, index) => (
             <div
               key={index}
@@ -211,22 +214,30 @@ export default function Home() {
                 index === current ? "opacity-100" : "opacity-0"
               }`}
             >
-              <img
-                src={img}
-                alt={`slide-${index}`}
-                className="w-full h-full object-cover"
-              />
+              <div className="absolute inset-0 bg-black/40 z-10"></div>
+              <div className="relative h-full w-full">
+                <img
+                  src={img}
+                  alt={`slide-${index}`}
+                  className="w-full h-full object-cover"
+                  
+                  style={{
+                    width: '100%',
+                    height: '600px',
+                  }}
+                  />
+              </div>
             </div>
           ))}
 
-          <div>
-            <span className="absolute pl-10 pt-35 flex text-4xl font-bold text-white drop-shadow-[2px_2px_4px_rgba(0,0,0,0.7)]">
+          <div className="absolute inset-0 z-20 flex flex-col justify-center px-10">
+            <h2 className="text-4xl font-bold text-white mb-4 drop-shadow-lg">
               Trending Courses
-            </span>
-            <span className="absolute pl-10 pt-45 text-white drop-shadow-[2px_2px_4px_rgba(0,0,0,0.7)]">
+            </h2>
+            <p className="text-xl text-white mb-8 drop-shadow-md max-w-2xl">
               Discover the most in-demand courses, handpicked for your success.
-            </span>
-            <div className="absolute inset-0 flex items-center p-10 ">
+            </p>
+            <div className="flex items-center">
               <Link to="/trending">
                 <button className="bg-blue-600 text-white px-6 py-3 rounded-xl text-xl font-semibold shadow-lg hover:bg-blue-700 hover:scale-105 transition">
                   Explore Courses
