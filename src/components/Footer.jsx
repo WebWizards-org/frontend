@@ -2,12 +2,12 @@ import React from 'react';
 
 export default function Footer() {
     return (
-        <footer className="px-6 md:px-16 lg:px-24 xl:px-32 w-full bg-white ">
+        <footer className="px-6 md:px-16 lg:px-24 xl:px-32 w-full bg-gray-900 ">
             <div className="flex flex-col md:flex-row items-start justify-center gap-10 py-10 border-b border-gray-500/30">
                 
                 <div className="max-w-96">
-                    <h1 className='text-[30px] font-bold text-blue-600 text-shadow-2xs'>Learnify</h1>
-                    <p className="mt-6 text-sm text-gray-500">
+                    <h1 className='text-[30px] font-bold text-blue-500 text-shadow-2xs'>Learnify</h1>
+                    <p className="mt-6 text-sm text-gray-300">
                         Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.
                     </p>
                     <div className="flex items-center gap-2 mt-3">
@@ -31,8 +31,8 @@ export default function Footer() {
         
                 <div className="w-1/2 flex flex-wrap md:flex-nowrap justify-between">
                     <div>
-                        <h2 className="font-semibold text-gray-900 mb-5">RESOURCES</h2>
-                        <ul className="text-sm text-gray-500 space-y-2 list-none">
+                        <h2 className="font-semibold text-white mb-5">RESOURCES</h2>
+                        <ul className="text-sm text-gray-200 space-y-2 list-none">
                             <li><a href="#">Documentation</a></li>
                             <li><a href="#">Tutorials</a></li>
                             <li><a href="#">Blog</a></li>
@@ -40,8 +40,8 @@ export default function Footer() {
                         </ul>
                     </div>
                     <div>
-                        <h2 className="font-semibold text-gray-900 mb-5">COMPANY</h2>
-                        <div className="text-sm text-gray-500 space-y-2 list-none">
+                        <h2 className="font-semibold text-white mb-5">COMPANY</h2>
+                        <div className="text-sm text-gray-200 space-y-2 list-none">
                             <li><a href="#">About</a></li>
                             <li><a href="#">Careers</a></li>
                             <li><a href="#">Privacy</a></li>
