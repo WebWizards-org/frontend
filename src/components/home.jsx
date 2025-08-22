@@ -124,7 +124,7 @@ export default function Home() {
         >
           {/* <div className="absolute inset-0 z-10 bg-black/50 md:bg-transparent"></div> */}
           <div className="w-140 mt-15 mx-10 ">
-            <h1 className="relative z-10 mt-35 text-[20px] font-bold md:text-[50px] text-gray-900 sm:text-[40px]">
+            <h1 className="relative z-10 mt-25 text-[20px] font-bold md:text-[50px] text-gray-900 sm:text-[40px]">
               LEARN ANYTIME,{" "}
               <span className="text-blue-700">GROW ANYWHERE</span>
             </h1>
@@ -178,10 +178,10 @@ export default function Home() {
         </div>
 
         <div className="md:mt-[-50px] flex justify-center gap-10 bg-gray-100 w-full flex-wrap place-content-stretch items-center py-20">
-          {features.map((val, idx) => (
+       {features.map((val, idx) => (
             <div
               key={idx}
-              className="w-[280px] bg-white h-[260px] shadow-[0px_0px_13px_0px_rgba(0,_0,_0,_0.1)] rounded-md text mt-10 p-5 hover:shadow-lg transition-shadow duration-300 ease-in-out"
+              className="w-110 bg-white h-65 shadow-[0px_0px_13px_0px_rgba(0,_0,_0,_0.1)] rounded-md text mt-10 p-5 hover:shadow-lg transition-shadow duration-300 ease-in-out"
             >
               <div className="">{val.icon}</div>
               <h1 className="text-xl font-bold mt-5">{val.title}</h1>
@@ -260,7 +260,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="py-10 md:py-20"> 
+        <div>
           <div className="text-center mb-16 ">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Get Started in 3 Easy Steps
@@ -291,28 +291,16 @@ export default function Home() {
           </div>
         </div>
 
-        <div className=" mx-auto text-center pt-20 pb-25 bg-blue-50 text-white">
+        <div className=" mx-auto text-center py-20 bg-blue-50 text-white">
           <h1 className="text-[45px] text-blue-500 font-bold">
             Ready to Transform Your Future?
           </h1>
-          <p className="text-lg text-gray-700 mb-6 mx-auto w-[50%]">
+          <p className="text-lg text-gray-700 mb-6">
             Join over 50,000 students who are already building the skills they
             need to succeed in tomorrow's economy
           </p>
-          <div className="mt-15"> 
-            <Link to="/register">
-              <button className="bg-blue-600 text-white px-6 py-3 rounded-xl text-xl font-semibold shadow-lg hover:bg-blue-700 hover:scale-105 transition">
-                Start Learning Today<GoArrowRight className="inline-block ml-2" />
-              </button>
-            </Link>
-            <Link to="/trending">
-              <button className="ml-5 bg-white text-blue-600 px-6 py-3 rounded-xl text-xl font-semibold shadow-lg hover:bg-gray-100 hover:scale-105 transition">
-                Explore Courses
-              </button>
-            </Link>
-          </div>
         </div>
-  
+
         <Footer />
       </div>
     </>
