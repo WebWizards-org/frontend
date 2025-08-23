@@ -260,7 +260,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div>
+        <div className="my-20">
           <div className="text-center mb-16 ">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Get Started in 3 Easy Steps
@@ -295,10 +295,20 @@ export default function Home() {
           <h1 className="text-[45px] text-blue-500 font-bold">
             Ready to Transform Your Future?
           </h1>
-          <p className="text-lg text-gray-700 mb-6">
+          <p className="text-lg text-gray-700 mb-6 mx-auto w-[50%] py-5">
             Join over 50,000 students who are already building the skills they
             need to succeed in tomorrow's economy
           </p>
+          <Link to="/register">
+            <button className="bg-blue-600 text-white px-6 py-3 rounded-xl text-xl font-semibold shadow-lg hover:bg-blue-700 hover:scale-105 transition mt-5">
+              Start Learning Now <GoArrowRight className="inline-block ml-2" />
+            </button>
+          </Link>
+          <Link to="/about">
+            <button className="ml-5 bg-white text-blue-600 px-6 py-3 rounded-xl text-xl font-semibold shadow-lg hover:bg-gray-100 hover:scale-105 transition">
+              Browse Courses 
+            </button>
+          </Link>
         </div>
 
         <Footer />
