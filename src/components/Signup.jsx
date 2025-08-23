@@ -43,12 +43,17 @@ function Signup() {
         if(Object.keys(newerrors).length > 0) return;
  
         try {
+            // Log the data being sent
+            console.log('Sending registration data:', { name, email, number, password });
+            
             const response = await api.post('/register', {
                 name, 
                 email, 
                 number, 
                 password
             });
+            
+            console.log('Registration response:', response.data);
             
             if (response.data.token) {
                 login(response.data.token, response.data.user);
@@ -58,8 +63,12 @@ function Signup() {
             }
         } catch (error) {
             console.error('Registration error:', error);
+            console.error('Error response:', error.response?.data);
+            
             if (error.response?.data?.errors) {
                 seterrors(error.response.data.errors);
+            } else if (error.response?.data?.message) {
+                seterrors({ general: error.response.data.message });
             } else {
                 seterrors({ general: 'Registration failed. Please try again.' });
             }
@@ -179,6 +188,9 @@ function Signup() {
           >
             Sign Up
           </button>
+          {errors.general && (
+            <p className="text-red-500 text-sm mt-2 text-center">{errors.general}</p>
+          )}
         </form>
         <hr className='border-gray-400' />
 

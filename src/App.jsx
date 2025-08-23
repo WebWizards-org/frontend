@@ -8,7 +8,6 @@ import YouTubeVideos from './components/Api.jsx';
 import BookSearch from './components/Booksearch.jsx';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
-// Protected Route component
 const ProtectedRoute = ({ children }) => {
   const { token } = useAuth();
   if (!token) {
