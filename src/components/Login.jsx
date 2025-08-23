@@ -1,7 +1,8 @@
 import React from 'react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../utils/api'
+import { useAuth } from '../context/AuthContext'
 import PasswordIcon from '../icons/PasswordIcon'
 import EmailIcon from '../icons/EmailIcon'
 import EyeIcon from '../icons/EyeIcon'
@@ -14,7 +15,9 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
 
-  const handlesubmit = (e)=>{
+  const { login } = useAuth();
+  
+  const handlesubmit = async (e) => {
         e.preventDefault()
 
         let newerrors = {}
@@ -25,14 +28,24 @@ function Login() {
 
         if(Object.keys(newerrors).length > 0) return;
 
-        axios.post('http://localhost:3001/login', {email, password})
-        .then(result => {
-          console.log(result)
-          if(result.data === "Success"){
-            navigate('/')
-          }
-        })
-        .catch(err => console.log(err))
+        try {
+            const response = await api.post('/login', {
+                email, 
+                password
+            });
+            
+            if (response.data.token) {
+                login(response.data.token, response.data.user);
+                navigate('/');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            if (error.response?.data?.message) {
+                seterrors({ general: error.response.data.message });
+            } else {
+                seterrors({ general: 'Login failed. Please try again.' });
+            }
+        }
     }
 
   return (
@@ -100,7 +113,7 @@ function Login() {
 
           <button 
             type='submit' 
-            className='w-full bg-[#1B3C53] text-white py-2 px-4 rounded-md hover:bg-[#0E2148] focus:outline-none focus:ring-2 focus:ring-[#1B3C53] focus:ring-offset-2 transition duration-150 font-medium'
+            className='cursor-pointer w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-[#1B3C53] focus:ring-offset-2 transition duration-150 font-medium'
           >
             Sign In
           </button>
@@ -109,7 +122,7 @@ function Login() {
         
                 <p className='text-center text-sm text-gray-600'>
                   Don't have an account?{' '}
-                  <Link to='/register' className='text-[#1B3C53] hover:text-[#0E2148] font-medium'>
+                  <Link to='/register' className='text-blue-600 hover:text-blue-700 font-medium'>
                     Sign Up
                   </Link>
                 </p>

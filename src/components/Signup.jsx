@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../utils/api'
+import { useAuth } from '../context/AuthContext'
 import PersonIcon from '../icons/PersonIcon'
 import EmailIcon from '../icons/EmailIcon'
 import PhoneIcon from '../icons/PhoneIcon'
@@ -26,7 +27,9 @@ function Signup() {
       setpassword(newPass);
     }
     
-    const handlesubmit = (e)=>{
+    const { login } = useAuth();
+    
+    const handlesubmit = async (e) => {
         e.preventDefault()
 
         let newerrors = {}
@@ -39,11 +42,28 @@ function Signup() {
 
         if(Object.keys(newerrors).length > 0) return;
  
-        axios.post('http://localhost:3001/register', {name, email, number, password})
-        .then(result => {console.log(result)
-            navigate('/login')
-        })
-        .catch(err => console.log(err))
+        try {
+            const response = await api.post('/register', {
+                name, 
+                email, 
+                number, 
+                password
+            });
+            
+            if (response.data.token) {
+                login(response.data.token, response.data.user);
+                navigate('/');
+            } else {
+                navigate('/login');
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            if (error.response?.data?.errors) {
+                seterrors(error.response.data.errors);
+            } else {
+                seterrors({ general: 'Registration failed. Please try again.' });
+            }
+        }
     }
   return (
     <div className='min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 to-purple-100'>
@@ -155,7 +175,7 @@ function Signup() {
 
           <button 
             type='submit' 
-            className='w-full bg-[#1B3C53] text-white py-2 px-4 rounded-md hover:bg-[#0E2148] focus:outline-none focus:ring-2 focus:ring-[#1B3C53] focus:ring-offset-2 transition duration-150 font-medium'
+            className='w-full cursor-pointer bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-[#1B3C53] focus:ring-offset-2 transition duration-150 font-medium'
           >
             Sign Up
           </button>
@@ -164,7 +184,7 @@ function Signup() {
 
         <p className='text-center text-sm text-gray-600'>
           Already have an account?{' '}
-          <Link to='/login' className='text-[#1B3C53] hover:text-[#0E2148] font-medium'>
+          <Link to='/login' className='text-blue-600 hover:text-blue-700 font-medium'>
             Sign in
           </Link>
         </p>

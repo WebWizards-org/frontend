@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import Hamburger from "hamburger-react";
-import register from './Signup.jsx';
+import { useAuth } from '../context/AuthContext';
 
 function Navbar() {
   const [isOpen, setOpen] = useState(false);
+  const { token, user, logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className='bg-white  fixed w-full top-0 z-50 shadow-md left-0'>
@@ -24,8 +26,25 @@ function Navbar() {
           </div>
 
           <div className='space-x-3 hidden md:flex mr-5'>
-            <NavLink to='/login' className='py-2 font-semibold'>Login</NavLink>
-            <NavLink to='/register' className='bg-blue-600 py-2.5 px-6 rounded-4xl text-white font-semibold'>SignUp</NavLink>
+            {!token ? (
+              <>
+                <NavLink to='/login' className='py-2 font-semibold'>Login</NavLink>
+                <NavLink to='/register' className='bg-blue-600 py-2.5 px-6 rounded-4xl text-white font-semibold'>SignUp</NavLink>
+              </>
+            ) : (
+              <>
+                <span className='py-2 font-semibold text-blue-600'>Welcome, {user?.name}</span>
+                <button 
+                  onClick={() => {
+                    logout();
+                    navigate('/login');
+                  }} 
+                  className='bg-red-600 py-2.5 px-6 rounded-4xl text-white font-semibold'
+                >
+                  Logout
+                </button>
+              </>
+            )}
           </div>
 
           {/* Hamburger shown only on mobile */}
@@ -43,8 +62,25 @@ function Navbar() {
               <NavLink className="block">Contact</NavLink>
               <hr className='opacity-20 w-[100%]' />
 
-              <NavLink className="block">Login</NavLink>
-              <NavLink className=" p-2 bg-gradient-to-r from-[#1B3C53] to-[#2A5470] text-white font-bold rounded-md;">SignUp</NavLink>
+              {!token ? (
+                <>
+                  <NavLink to="/login" className="block">Login</NavLink>
+                  <NavLink to="/register" className="p-2 bg-gradient-to-r from-[#1B3C53] to-[#2A5470] text-white font-bold rounded-md">SignUp</NavLink>
+                </>
+              ) : (
+                <>
+                  <span className='block py-2 font-semibold text-blue-600'>Welcome, {user?.name}</span>
+                  <button 
+                    onClick={() => {
+                      logout();
+                      navigate('/login');
+                    }} 
+                    className="p-2 bg-red-600 text-white font-bold rounded-md w-full"
+                  >
+                    Logout
+                  </button>
+                </>
+              )}
              
              
             </div>
