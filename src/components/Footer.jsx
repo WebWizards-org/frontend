@@ -41,7 +41,7 @@ export default function Footer() {
                     </div>
                     <div>
                         <h2 className="font-semibold text-white mb-5">COMPANY</h2>
-                        <div className="text-sm text-gray-200 space-y-2 list-none">
+                        <div className="text-sm      text-gray-200 space-y-2 list-none">
                             <li><a href="#">About</a></li>
                             <li><a href="#">Careers</a></li>
                             <li><a href="#">Privacy</a></li>
