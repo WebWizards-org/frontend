@@ -22,7 +22,7 @@ function Navbar() {
             }>Home</NavLink>
             <NavLink>Services</NavLink>
             <NavLink>About</NavLink>
-            <NavLink>Contact</NavLink>
+            <NavLink to='/contactUs'>Contact</NavLink>
           </div>
 
           <div className='space-x-3 hidden md:flex mr-5'>
