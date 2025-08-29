@@ -8,6 +8,7 @@ import YouTubeVideos from "./components/Api.jsx";
 import BookSearch from "./components/Booksearch.jsx";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Explore from "./pages/Explore.jsx";
+import ContactUs from "./components/ContactUs.jsx";
 
 const ProtectedRoute = ({ children }) => {
   const { token } = useAuth();
@@ -26,6 +27,7 @@ function App() {
           <Route path="/register" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/explore" element={<Explore />} />
+          <Route path="/ContactUs" element={<ContactUs />} />
           <Route
             path="/trending"
             element={
