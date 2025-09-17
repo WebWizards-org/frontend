@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { use } from 'react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../utils/api'
@@ -36,8 +36,16 @@ function Login() {
             
             if (response.data.token) {
                 login(response.data.token, response.data.user);
-                navigate('/');
-            }
+                const userRole = response.data.user.role;
+                if(userRole === 'admin') {
+                    navigate('/dashboard');
+                } else if(userRole === 'instructor') {
+                    navigate('/dahsboard');
+                } else {
+                    navigate('/dahsboard');
+                }
+              }
+                
         } catch (error) {
             console.error('Login error:', error);
             if (error.response?.data?.message) {

@@ -9,6 +9,7 @@ import BookSearch from "./components/Booksearch.jsx";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Explore from "./pages/Explore.jsx";
 import ContactUs from "./components/ContactUs.jsx";
+import RoleBasedDashboard from "./components/RoleBasedDashboard.jsx";
 
 const ProtectedRoute = ({ children }) => {
   const { token } = useAuth();
@@ -35,6 +36,14 @@ function App() {
                 <TrendingCourses />
                 <ContactUs />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              // <ProtectedRoute>
+                <RoleBasedDashboard />
+              // </ProtectedRoute>
             }
           />
         </Routes>
