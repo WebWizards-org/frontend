@@ -3,11 +3,12 @@ import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import hero from "../assets/HERO.jpg";
 import Footer from "./Footer";
-import genai from '../assets/generativeai.png'
-import cyber from '../assets/cybersecurity.png'
-import cloud from '../assets/cloudcomputing.png'
-import fullstack from '../assets/fullstack.png'
-import { BookOpen,
+import genai from "../assets/generativeai.png";
+import cyber from "../assets/cybersecurity.png";
+import cloud from "../assets/cloudcomputing.png";
+import fullstack from "../assets/fullstack.png";
+import {
+  BookOpen,
   BarChart2,
   Video,
   Smartphone,
@@ -94,25 +95,49 @@ export default function Home() {
 
   const slides = [
     {
-    image: genai,
-    text: "Master Generative AI",
-    button: <Link to="/courses/genai"><button className="bg-blue-600 text-white px-6 py-3 rounded-xl">Explore GenAI</button></Link>
-      },
+      image: genai,
+      text: "Master Generative AI",
+      button: (
+        <Link to="/courses/genai">
+          <button className="bg-blue-600 text-white px-6 py-3 rounded-xl">
+            Explore GenAI
+          </button>
+        </Link>
+      ),
+    },
     {
-    image: cloud,
-    text: "Cloud Computing Essentials",
-    button: <Link to="/courses/cloud"><button className="bg-purple-600 text-white px-6 py-3 rounded-xl">Explore Cloud</button></Link> 
-      },
+      image: cloud,
+      text: "Cloud Computing Essentials",
+      button: (
+        <Link to="/courses/cloud">
+          <button className="bg-purple-600 text-white px-6 py-3 rounded-xl">
+            Explore Cloud
+          </button>
+        </Link>
+      ),
+    },
     {
-    image: cyber,
-    text: "Become a CyberSecurity Expert",
-    button: <Link to="/courses/cybersecurity"><button className="bg-green-600 text-white px-6 py-3 rounded-xl">Explore Cybersecurity</button></Link>
-      },
+      image: cyber,
+      text: "Become a CyberSecurity Expert",
+      button: (
+        <Link to="/courses/cybersecurity">
+          <button className="bg-green-600 text-white px-6 py-3 rounded-xl">
+            Explore Cybersecurity
+          </button>
+        </Link>
+      ),
+    },
     {
-    image: fullstack,
-    text: "Fullstack Development Bootcamp",
-    button: <Link to="/courses/fullstack"><button className="bg-pink-600 text-white px-6 py-3 rounded-xl">Explore Fullstack</button></Link>
-  }
+      image: fullstack,
+      text: "Fullstack Development Bootcamp",
+      button: (
+        <Link to="/courses/fullstack">
+          <button className="bg-pink-600 text-white px-6 py-3 rounded-xl">
+            Explore Fullstack
+          </button>
+        </Link>
+      ),
+    },
   ];
 
   const [current, setCurrent] = useState(0);
@@ -134,7 +159,6 @@ export default function Home() {
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
-                  
           }}
           className="flex mt-21 justify-start relative bg-amber-50 min-h-[500px] md:min-h-[580px] bg-cover bg-center bg-no-repeat md:items-start"
         >
@@ -194,7 +218,7 @@ export default function Home() {
         </div>
 
         <div className="md:mt-[-50px] flex justify-center gap-10 bg-gray-100 w-full flex-wrap place-content-stretch items-center py-20">
-       {features.map((val, idx) => (
+          {features.map((val, idx) => (
             <div
               key={idx}
               className="w-110 bg-white h-65 shadow-[0px_0px_13px_0px_rgba(0,_0,_0,_0.1)] rounded-md text mt-10 p-5 hover:shadow-lg transition-shadow duration-300 ease-in-out"
@@ -237,8 +261,8 @@ export default function Home() {
                   alt={`slide-${index}`}
                   className="w-full h-full object-cover"
                   style={{
-                    width: '100%',
-                    height: '600px',
+                    width: "100%",
+                    height: "600px",
                   }}
                 />
                 <div className="absolute inset-0 z-20 flex flex-col justify-center items-start px-10">
@@ -327,7 +351,7 @@ export default function Home() {
           </Link>
           <Link to="/about">
             <button className="ml-5 bg-white text-blue-600 px-6 py-3 rounded-xl text-xl font-semibold shadow-lg hover:bg-gray-100 hover:scale-105 transition">
-              Browse Courses 
+              Browse Courses
             </button>
           </Link>
         </div>

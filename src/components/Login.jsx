@@ -40,9 +40,9 @@ function Login() {
                 if(userRole === 'admin') {
                     navigate('/dashboard');
                 } else if(userRole === 'instructor') {
-                    navigate('/dahsboard');
+                    navigate('/dashboard');
                 } else {
-                    navigate('/dahsboard');
+                    navigate('/dashboard');
                 }
               }
                 
