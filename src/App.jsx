@@ -9,6 +9,8 @@ import BookSearch from "./components/Booksearch.jsx";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Explore from "./pages/Explore.jsx";
 import ContactUs from "./components/ContactUs.jsx";
+import Courses from "./pages/GenAI.jsx";
+import GenAI from "./pages/GenAI.jsx";
 
 const ProtectedRoute = ({ children }) => {
   const { token } = useAuth();
@@ -28,6 +30,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/ContactUs" element={<ContactUs />} />
+          <Route path="/courses/genai" element={<GenAI />} />
           <Route
             path="/trending"
             element={

@@ -93,10 +93,26 @@ export default function Home() {
   ];
 
   const slides = [
-    genai,
-    cyber,
-    cloud,
-    fullstack,
+    {
+    image: genai,
+    text: "Master Generative AI",
+    button: <Link to="/courses/genai"><button className="bg-blue-600 text-white px-6 py-3 rounded-xl">Explore GenAI</button></Link>
+      },
+    {
+    image: cloud,
+    text: "Cloud Computing Essentials",
+    button: <Link to="/courses/cloud"><button className="bg-purple-600 text-white px-6 py-3 rounded-xl">Explore Cloud</button></Link> 
+      },
+    {
+    image: cyber,
+    text: "Become a CyberSecurity Expert",
+    button: <Link to="/courses/cybersecurity"><button className="bg-green-600 text-white px-6 py-3 rounded-xl">Explore Cybersecurity</button></Link>
+      },
+    {
+    image: fullstack,
+    text: "Fullstack Development Bootcamp",
+    button: <Link to="/courses/fullstack"><button className="bg-pink-600 text-white px-6 py-3 rounded-xl">Explore Fullstack</button></Link>
+  }
   ];
 
   const [current, setCurrent] = useState(0);
@@ -207,7 +223,7 @@ export default function Home() {
         </div>
 
         <div className="relative w-full h-[600px] overflow-hidden shadow-lg my-12">
-          {slides.map((img, index) => (
+          {slides.map((slide, index) => (
             <div
               key={index}
               className={`absolute w-full h-full transition-opacity duration-1000 ease-in-out ${
@@ -217,20 +233,25 @@ export default function Home() {
               <div className="absolute inset-0 bg-black/40 z-10"></div>
               <div className="relative h-full w-full">
                 <img
-                  src={img}
+                  src={slide.image}
                   alt={`slide-${index}`}
                   className="w-full h-full object-cover"
-                  
                   style={{
                     width: '100%',
                     height: '600px',
                   }}
-                  />
+                />
+                <div className="absolute inset-0 z-20 flex flex-col justify-center items-start px-10">
+                  <h2 className="text-4xl font-bold text-white mb-4 drop-shadow-lg">
+                    {slide.text}
+                  </h2>
+                  <div className="mb-8">{slide.button}</div>
+                </div>
               </div>
             </div>
           ))}
 
-          <div className="absolute inset-0 z-20 flex flex-col justify-center px-10">
+          {/* <div className="absolute inset-0 z-20 flex flex-col justify-center px-10">
             <h2 className="text-4xl font-bold text-white mb-4 drop-shadow-lg">
               Trending Courses
             </h2>
@@ -244,7 +265,7 @@ export default function Home() {
                 </button>
               </Link>
             </div>
-          </div>
+          </div> */}
 
           {/* Dots indicator */}
           <div className="absolute bottom-5 flex justify-center w-full gap-2">
