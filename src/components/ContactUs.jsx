@@ -14,7 +14,7 @@ function ContactUs() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    desc: "",
+    message: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -34,10 +34,12 @@ function ContactUs() {
       newErrors.email = "Please enter a valid email address";
     }
 
-    if (!formData.desc.trim()) {
-      newErrors.desc = "Message is required";
-    } else if (formData.desc.trim().length < 10) {
-      newErrors.desc = "Message must be at least 10 characters long";
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required";
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = "Message must be at least 10 characters long";
+    } else if (formData.message.length > 500) {
+      newErrors.message = "Message cannot exceed 500 characters";
     }
 
     setErrors(newErrors);
@@ -46,11 +48,12 @@ function ContactUs() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    // Limit message to 500 chars
+    if (name === "message" && value.length > 500) return;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
@@ -62,23 +65,24 @@ function ContactUs() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) {
       return;
     }
-
     setIsSubmitting(true);
     setSubmitStatus(null);
-
     try {
-      // Simulated API call - replace with your actual endpoint
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      // const response = await axios.post('http://localhost:3001/api/messages/contactUs', formData);
-
+      const response = await fetch(
+        "http://localhost:3001/api/messages/contactUs",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
+      if (!response.ok) throw new Error("Network response was not ok");
       setSubmitStatus("success");
-      setFormData({ name: "", email: "", desc: "" });
+      setFormData({ name: "", email: "", message: "" });
     } catch (error) {
-      console.log(error);
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
@@ -191,7 +195,7 @@ function ContactUs() {
               {/* Message Field */}
               <div>
                 <label
-                  htmlFor="desc"
+                  htmlFor="message"
                   className="block text-sm font-semibold text-gray-700 mb-2"
                 >
                   Message
@@ -201,24 +205,24 @@ function ContactUs() {
                     <MessageSquare className="w-5 h-5 text-gray-400" />
                   </div>
                   <textarea
-                    id="desc"
-                    name="desc"
+                    id="message"
+                    name="message"
                     rows={5}
-                    value={formData.desc}
+                    value={formData.message}
                     onChange={handleChange}
                     className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none ${
-                      errors.desc
+                      errors.message
                         ? "border-red-500 bg-red-50"
                         : "border-gray-300 hover:border-gray-400"
                     }`}
                     placeholder="Tell us how we can help you..."
                   />
                 </div>
-                {errors.desc && (
-                  <p className="mt-1 text-sm text-red-600">{errors.desc}</p>
+                {errors.message && (
+                  <p className="mt-1 text-sm text-red-600">{errors.message}</p>
                 )}
                 <p className="mt-1 text-sm text-gray-500">
-                  {formData.desc.length}/500 characters
+                  {formData.message.length}/500 characters
                 </p>
               </div>
 
