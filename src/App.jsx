@@ -29,12 +29,13 @@ function App() {
           <Route path="/register" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/explore" element={<Explore />} />
-          <Route path="/ContactUs" 
+          <Route
+            path="/ContactUs"
             element={
               <ProtectedRoute>
-              <ContactUs />
+                <ContactUs />
               </ProtectedRoute>
-          } 
+            }
           />
           <Route path="/courses/genai" element={<GenAI />} />
           <Route
@@ -50,7 +51,7 @@ function App() {
             path="/dashboard"
             element={
               // <ProtectedRoute>
-                <RoleBasedDashboard />
+              <RoleBasedDashboard />
               // </ProtectedRoute>
             }
           />
@@ -61,3 +62,4 @@ function App() {
 }
 
 export default App;
+
