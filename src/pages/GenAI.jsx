@@ -1,6 +1,8 @@
 import React from 'react';
 import { GoPeople } from "react-icons/go";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import { PiShoppingCartLight } from "react-icons/pi";
+import { FaRupeeSign } from "react-icons/fa";
 import per1 from "../assets/person1.jpeg";
 import per2 from "../assets/person2.jpeg"
 import { Star } from "lucide-react";
@@ -48,6 +50,12 @@ function GenAI() {
             45,623 students
           </span>
         </div>
+
+        <div className='p-5 flex'>
+          <span className='flex font-bold text-xl bg-green-800 text-white p-2 rounded-md'><FaRupeeSign className='mt-1' />2999</span>
+          <span className='text-gray-600 line-through text-xl pl-3 flex pt-2 font-bold'><FaRupeeSign className='mt-1' />6000</span>
+          <span className='ml-3 bg-red-600 p-2 rounded-md text-white font-bold text-xl'>50% OFF</span>
+        </div>
         <h2 className='pt-5 font-bold text-2xl text-[#17324e] pl-5'>About this Course</h2>
         <div className="mt-4 text-gray-700 text-base leading-relaxed pl-5">
           Learn the fundamentals of Generative AI and how to build your own AI-powered applications.
@@ -93,6 +101,13 @@ function GenAI() {
             </div>
           ))}
         </div>
+
+        <div className='p-5'>
+  <button className='hover:bg-blue-900 cursor-pointer w-full bg-blue-700 rounded-md text-xl font-bold text-white py-2 flex items-center justify-center gap-2'>
+    <PiShoppingCartLight /> Add To Cart
+  </button>
+</div>
+
       </div>
     </div>
   );
