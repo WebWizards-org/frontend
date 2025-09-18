@@ -29,7 +29,13 @@ function App() {
           <Route path="/register" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/explore" element={<Explore />} />
-          <Route path="/ContactUs" element={<ContactUs />} />
+          <Route path="/ContactUs" 
+            element={
+              <ProtectedRoute>
+              <ContactUs />
+              </ProtectedRoute>
+          } 
+          />
           <Route path="/courses/genai" element={<GenAI />} />
           <Route
             path="/trending"

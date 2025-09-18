@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import React  from 'react';
 import Navbar from '../components/Navbar';
-const LMSLandingPage = () => {
+const home = () => {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
   useEffect(() => {
@@ -499,4 +499,4 @@ const LMSLandingPage = () => {
   );
 };
 
-export default LMSLandingPage;
+export default home;
