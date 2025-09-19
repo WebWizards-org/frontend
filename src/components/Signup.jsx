@@ -10,10 +10,10 @@ import EyeIcon from '../icons/EyeIcon'
 import EyeOffIcon from '../icons/EyeOffIcon'
 
 function Signup() {
-  const [name, setname] = useState()
-  const [email, setemail] = useState()
-  const [password, setpassword] = useState('')
-  const [number, setnumber] = useState('')
+  const [name, setname] = useState("")
+  const [email, setemail] = useState("")
+  const [password, setpassword] = useState("")
+  const [number, setnumber] = useState("")
   const [role, setrole] = useState('student')
     const [errors, seterrors] = useState({})
     const [showPassword, setShowPassword] = useState(false)
@@ -97,6 +97,7 @@ function Signup() {
               id="name"
               name='name'
               placeholder='Enter your name'
+              value={name}
               className={`w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1B3C53] focus:border-[#1B3C53] outline-none transition duration-150'
                 ${errors.name ? 'border-red-600' : 'border-gray-400'}`}
               onChange={(e)=>setname(e.target.value)}
@@ -119,6 +120,7 @@ function Signup() {
               id="email"
               name='email'
               placeholder='Enter your email'
+              value={email}
               className={`w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1B3C53] focus:border-[#1B3C53] outline-none transition duration-150'
                 ${errors.email ? 'border-red-600' : 'border-gray-400'}`}
               onChange={(e)=>setemail(e.target.value)}
@@ -136,15 +138,17 @@ function Signup() {
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <PhoneIcon className="h-5 w-5 text-gray-400" />
               </div>
-            <input type="number"
-            id='number'
-            name='number'
-            placeholder='Enter your phone number'
-            className={`w-full pl-10 px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#1B3C53] outline-none transition duration-150 
+            <input 
+              type="number"
+              id='number'
+              name='number'
+              placeholder='Enter your phone number'
+              value={number === undefined ? '' : number}
+              className={`w-full pl-10 px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#1B3C53] outline-none transition duration-150 
                     ${errors.number ? 'border-red-500' : 'border-gray-300'}`}
-                  onChange={(e)=>setnumber(e.target.value)}
-                  onFocus={() => seterrors(prev => ({...prev, number: ""}))}
-                />
+              onChange={(e)=>setnumber(e.target.value)}
+              onFocus={() => seterrors(prev => ({...prev, number: ""}))}
+            />
               </div>
               {errors.number && <p className="text-red-500 text-sm">{errors.number}</p>}
             </div>
