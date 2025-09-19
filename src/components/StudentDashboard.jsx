@@ -1,7 +1,7 @@
 import React from 'react'
 import Sidebar, { SidebarItem } from "./Sidebar"; 
 import { Home, LayoutDashboard, LogOut, MessageSquare, Settings } from "lucide-react";
-
+import DashCard from './DashCard';
 function StudentDashboard() {
   return (
     <div className='flex'>
@@ -13,8 +13,16 @@ function StudentDashboard() {
         <SidebarItem icon={<LogOut size={20} />} text="Settings" />
       </Sidebar>
       <main className="flex-1 p-6 bg-gray-50 min-h-screen">
-        <h1 className="text-3xl font-bold mb-6">Student Dashboard</h1>
+        <div className='bg-red'> 
+          <h1 className="text-3xl font-bold">Welcome back, Student</h1>
+          <p>Here's what's happening with your learning platform today.</p>
+        </div>
         {/* Admin-specific content goes here */}
+        <div className="flex flex-wrap w-full gap-5 mt-10">
+          <DashCard />
+          <DashCard />
+          <DashCard />
+        </div>
       </main>
     </div>
   )

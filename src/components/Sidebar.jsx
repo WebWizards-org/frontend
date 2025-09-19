@@ -8,7 +8,7 @@ export default function Sidebar({ children }) {
 
   return (
     <aside className="h-screen">
-      <nav className="h-full flex flex-col bg-white border-r shadow-sm">
+      <nav className="h-full flex flex-col bg-white border-r border-gray-200 shadow-sm">
         {/* Header */}
         <div className="p-4 pb-2 flex justify-between items-center">
           <h1
@@ -32,7 +32,7 @@ export default function Sidebar({ children }) {
         </SidebarContext.Provider>
 
         {/* Footer */}
-        <div className="border-t p-3">
+        <div className="border-t border-gray-200 p-3">
           <div
             className={`flex items-center justify-between overflow-hidden transition-all ${
               expanded ? "w-52 opacity-100" : "w-0 opacity-0"
