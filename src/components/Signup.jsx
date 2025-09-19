@@ -10,10 +10,11 @@ import EyeIcon from '../icons/EyeIcon'
 import EyeOffIcon from '../icons/EyeOffIcon'
 
 function Signup() {
-    const [name, setname] = useState()
-    const [email, setemail] = useState()
-    const [password, setpassword] = useState('')
-    const [number, setnumber] = useState('')
+  const [name, setname] = useState()
+  const [email, setemail] = useState()
+  const [password, setpassword] = useState('')
+  const [number, setnumber] = useState('')
+  const [role, setrole] = useState('student')
     const [errors, seterrors] = useState({})
     const [showPassword, setShowPassword] = useState(false)
     const navigate = useNavigate()
@@ -32,47 +33,49 @@ function Signup() {
     const handlesubmit = async (e) => {
         e.preventDefault()
 
-        let newerrors = {}
-        if(!name) newerrors.name = "Name is Required!"
-        if(!email) newerrors.email = "Email is required!"
-        if(!number) newerrors.number = "Phone Number is required!"
-        if(!password) newerrors.password = "Password is required!"
+    let newerrors = {}
+    if(!name) newerrors.name = "Name is Required!"
+    if(!email) newerrors.email = "Email is required!"
+    if(!number) newerrors.number = "Phone Number is required!"
+    if(!password) newerrors.password = "Password is required!"
+    if(!role || !['student','instructor'].includes(role)) newerrors.role = "Role is required!"
 
-        seterrors(newerrors)
+    seterrors(newerrors)
 
-        if(Object.keys(newerrors).length > 0) return;
- 
-        try {
-            // Log the data being sent
-            console.log('Sending registration data:', { name, email, number, password });
-            
-            const response = await api.post('/register', {
-                name, 
-                email, 
-                number, 
-                password
-            });
-            
-            console.log('Registration response:', response.data);
-            
-            if (response.data.token) {
-                login(response.data.token, response.data.user);
-                navigate('/');
-            } else {
-                navigate('/login');
-            }
-        } catch (error) {
-            console.error('Registration error:', error);
-            console.error('Error response:', error.response?.data);
-            
-            if (error.response?.data?.errors) {
-                seterrors(error.response.data.errors);
-            } else if (error.response?.data?.message) {
-                seterrors({ general: error.response.data.message });
-            } else {
-                seterrors({ general: 'Registration failed. Please try again.' });
-            }
-        }
+    if(Object.keys(newerrors).length > 0) return;
+
+    try {
+      // Log the data being sent
+      console.log('Sending registration data:', { name, email, number, password, role });
+
+      const response = await api.post('/register', {
+        name,
+        email,
+        number,
+        password,
+        role
+      });
+
+      console.log('Registration response:', response.data);
+
+      if (response.data.token) {
+        login(response.data.token, response.data.user);
+        navigate('/');
+      } else {
+        navigate('/login');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      console.error('Error response:', error.response?.data);
+
+      if (error.response?.data?.errors) {
+        seterrors(error.response.data.errors);
+      } else if (error.response?.data?.message) {
+        seterrors({ general: error.response.data.message });
+      } else {
+        seterrors({ general: 'Registration failed. Please try again.' });
+      }
+    }
     }
   return (
     <div className='min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 to-purple-100'>
@@ -182,6 +185,22 @@ function Signup() {
               {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
             </div>
 
+          <div className='space-y-2'>
+            <label htmlFor="role" className='block text-sm font-medium text-gray-700'>
+              Sign up as
+            </label>
+            <select
+              id="role"
+              name="role"
+              value={role}
+              onChange={e => setrole(e.target.value)}
+              className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1B3C53] focus:border-[#1B3C53] outline-none transition duration-150'
+            >
+              <option value="student">Student</option>
+              <option value="instructor">Instructor</option>
+            </select>
+            {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
+          </div>
           <button 
             type='submit' 
             className='w-full cursor-pointer bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-[#1B3C53] focus:ring-offset-2 transition duration-150 font-medium'

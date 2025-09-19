@@ -9,7 +9,7 @@ function Navbar() {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white sticky top-0 w-full top-0 z-50 shadow-md left-0">
+    <div className="bg-white sticky top-0 w-full z-50 shadow-md left-0">
       <nav>
         <div className="flex justify-between items-center px-6 py-3 ">
           <div className=" py-2 px-3 ml-0 md:ml-5 rounded-2xl">
