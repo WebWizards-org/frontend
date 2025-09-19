@@ -98,7 +98,7 @@ export default function Home() {
       image: genai,
       text: "Master Generative AI",
       button: (
-        <Link to="/courses/genai">
+        <Link to="/course/gen-ai">
           <button className="bg-blue-600 text-white px-6 py-3 rounded-xl">
             Explore GenAI
           </button>
@@ -109,7 +109,7 @@ export default function Home() {
       image: cloud,
       text: "Cloud Computing Essentials",
       button: (
-        <Link to="/courses/cloud">
+        <Link to="/course/cloud-computing">
           <button className="bg-purple-600 text-white px-6 py-3 rounded-xl">
             Explore Cloud
           </button>
@@ -120,7 +120,7 @@ export default function Home() {
       image: cyber,
       text: "Become a CyberSecurity Expert",
       button: (
-        <Link to="/courses/cybersecurity">
+        <Link to="/course/cyber-security">
           <button className="bg-green-600 text-white px-6 py-3 rounded-xl">
             Explore Cybersecurity
           </button>
@@ -131,7 +131,7 @@ export default function Home() {
       image: fullstack,
       text: "Fullstack Development Bootcamp",
       button: (
-        <Link to="/courses/fullstack">
+        <Link to="/course/fullstack">
           <button className="bg-pink-600 text-white px-6 py-3 rounded-xl">
             Explore Fullstack
           </button>
