@@ -2,7 +2,7 @@ import React from 'react'
 import { User } from 'lucide-react'
 function DashCard({title, value, change, Icon}) {
   return (
-    <div className='w-60 p-5 bg-white rounded-lg shadow-md'>
+    <div className='w-70 p-5 bg-white rounded-lg shadow-md'>
       <div className='flex justify-between items-center'>
         <h4 className='font-semibold'>{title}</h4>
         <Icon size={20} />
