@@ -15,28 +15,32 @@ function Signup() {
   const [password, setpassword] = useState("")
   const [number, setnumber] = useState("")
   const [role, setrole] = useState('student')
-    const [errors, seterrors] = useState({})
-    const [showPassword, setShowPassword] = useState(false)
-    const navigate = useNavigate()
+  const [errors, seterrors] = useState({})
+  const [showPassword, setShowPassword] = useState(false)
+  const navigate = useNavigate()
 
-    const generatepassword=() =>{
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
-      let newPass = "";
-      for(let i=0; i<6; i++){
+  const generatepassword=() =>{
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+    let newPass = "";
+    for(let i=0; i<6; i++){
         newPass += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      setpassword(newPass);
     }
+    setpassword(newPass);
+  }
     
-    const { login } = useAuth();
+  const { login } = useAuth();
     
-    const handlesubmit = async (e) => {
-        e.preventDefault()
+  const handlesubmit = async (e) => {
+    e.preventDefault()
 
     let newerrors = {}
     if(!name) newerrors.name = "Name is Required!"
     if(!email) newerrors.email = "Email is required!"
-    if(!number) newerrors.number = "Phone Number is required!"
+    if(!number) {
+      newerrors.number = "Phone Number is required!";
+    } else if (!/^\d{10}$/.test(number)) {
+      newerrors.number = "Phone Number must be exactly 10 digits!";
+    }
     if(!password) newerrors.password = "Password is required!"
     if(!role || !['student','instructor'].includes(role)) newerrors.role = "Role is required!"
 

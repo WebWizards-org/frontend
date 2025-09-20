@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
+import { useAuth } from "../context/AuthContext";
 import hero from "../assets/HERO.jpg";
 import Footer from "./Footer";
 import genai from "../assets/generativeai.png";
@@ -22,6 +23,8 @@ import {
 import { GoArrowRight } from "react-icons/go";
 
 export default function Home() {
+  const navigate = useNavigate();
+  const { token } = useAuth ? useAuth() : {};
   const features = [
     {
       icon: <BookOpen className="w-15 h-15 text-blue-600" />,
@@ -179,12 +182,18 @@ export default function Home() {
               your potential.
             </p>
 
-            <Link
-              to="/register"
+            <button
               className="bg-blue-500 text-white relative px-4 py-3 rounded-xl text-xl font-bold mt-10 hover:bg-blue-600 hover:shadow-xl hover:scale-105 transition-all ease-in-out duration-350"
+              onClick={() => {
+                if (token) {
+                  navigate("/dashboard");
+                } else {
+                  navigate("/register");
+                }
+              }}
             >
               Get Started
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -340,7 +349,7 @@ export default function Home() {
               </div>
               <h3 className="text-lg text-gray-700 mb-4 font-medium">Quickly search, discover, and explore a wide range of books and authors to enhance your learning journey.</h3>
               <Link to="/books">
-                <button className="bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 px-8 font-bold rounded-xl text-lg shadow hover:scale-105 hover:bg-blue-600 transition-all duration-200">
+                <button className="cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 px-8 font-bold rounded-xl text-lg shadow hover:scale-105 hover:bg-blue-600 transition-all duration-200">
                   Search Books
                 </button>
               </Link>
