@@ -7,6 +7,7 @@ import genai from "../assets/generativeai.png";
 import cyber from "../assets/cybersecurity.png";
 import cloud from "../assets/cloudcomputing.png";
 import fullstack from "../assets/fullstack.png";
+import bookimage from "../assets/Booksimage.jpg"
 import {
   BookOpen,
   BarChart2,
@@ -97,6 +98,7 @@ export default function Home() {
     {
       image: genai,
       text: "Master Generative AI",
+      subtext: "Unleash creativity and innovation with cutting-edge Generative AI tools and techniques.",
       button: (
         <Link to="/course/gen-ai">
           <button className="bg-blue-600 text-white px-6 py-3 rounded-xl">
@@ -108,6 +110,7 @@ export default function Home() {
     {
       image: cloud,
       text: "Cloud Computing Essentials",
+      subtext: "Learn to design, deploy, and manage scalable applications on the cloud with real-world tools and services.",
       button: (
         <Link to="/course/cloud-computing">
           <button className="bg-purple-600 text-white px-6 py-3 rounded-xl">
@@ -119,6 +122,7 @@ export default function Home() {
     {
       image: cyber,
       text: "Become a CyberSecurity Expert",
+      subtext: "Protect digital assets by mastering the principles of ethical hacking, defense strategies, and security tools.",
       button: (
         <Link to="/course/cyber-security">
           <button className="bg-green-600 text-white px-6 py-3 rounded-xl">
@@ -130,6 +134,7 @@ export default function Home() {
     {
       image: fullstack,
       text: "Fullstack Development Bootcamp",
+      subtext: "Build dynamic, end-to-end web applications by mastering both frontend and backend technologies.",
       button: (
         <Link to="/course/fullstack">
           <button className="bg-pink-600 text-white px-6 py-3 rounded-xl">
@@ -246,7 +251,9 @@ export default function Home() {
           </button>
         </div>
 
-        <div className="relative w-full h-[600px] overflow-hidden shadow-lg my-12">
+          <h2 className="text-5xl font-bold text-center text-blue-950 pt-12">Trending Courses</h2>
+          <div className="relative w-full h-[600px] overflow-hidden shadow-lg ">
+        <div className="relative w-full h-[600px] overflow-hidden shadow-lg my-6">
           {slides.map((slide, index) => (
             <div
               key={index}
@@ -266,30 +273,16 @@ export default function Home() {
                   }}
                 />
                 <div className="absolute inset-0 z-20 flex flex-col justify-center items-start px-10">
-                  <h2 className="text-4xl font-bold text-white mb-4 drop-shadow-lg">
+                  <h2 className="text-4xl font-bold text-white mb-2 drop-shadow-lg">
                     {slide.text}
                   </h2>
+                  <h4 className="font-bold text-white pb-4 drop-shadow-md">{slide.subtext}</h4>
                   <div className="mb-8">{slide.button}</div>
                 </div>
               </div>
             </div>
           ))}
-
-          {/* <div className="absolute inset-0 z-20 flex flex-col justify-center px-10">
-            <h2 className="text-4xl font-bold text-white mb-4 drop-shadow-lg">
-              Trending Courses
-            </h2>
-            <p className="text-xl text-white mb-8 drop-shadow-md max-w-2xl">
-              Discover the most in-demand courses, handpicked for your success.
-            </p>
-            <div className="flex items-center">
-              <Link to="/trending">
-                <button className="bg-blue-600 text-white px-6 py-3 rounded-xl text-xl font-semibold shadow-lg hover:bg-blue-700 hover:scale-105 transition">
-                  Explore Courses
-                </button>
-              </Link>
-            </div>
-          </div> */}
+          </div>
 
           {/* Dots indicator */}
           <div className="absolute bottom-5 flex justify-center w-full gap-2">
@@ -333,6 +326,25 @@ export default function Home() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+
+
+        <div className="w-full flex justify-center items-center py-16 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50">
+          <div className="flex flex-col md:flex-row items-center gap-8 max-w-4xl w-full bg-white rounded-2xl shadow-xl p-8">
+            <img src={bookimage} className="rounded-xl w-full md:w-1/2 h-64 object-cover shadow-lg" alt="Books" />
+            <div className="flex-1 flex flex-col justify-center items-start">
+              <div className="flex items-center mb-4">
+                <BookOpen className="w-10 h-10 text-blue-600 mr-3" />
+                <h2 className="text-3xl font-bold text-blue-700">Search Books</h2>
+              </div>
+              <h3 className="text-lg text-gray-700 mb-4 font-medium">Quickly search, discover, and explore a wide range of books and authors to enhance your learning journey.</h3>
+              <Link to="/books">
+                <button className="bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 px-8 font-bold rounded-xl text-lg shadow hover:scale-105 hover:bg-blue-600 transition-all duration-200">
+                  Search Books
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
 

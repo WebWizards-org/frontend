@@ -2,7 +2,6 @@ import per1 from "../assets/person1.jpeg";
 import per2 from "../assets/person2.jpeg";
 
 const coursesData = [
-  // ================= Gen-AI =================
   {
     id: "gen-ai",
     level: "Beginner to Advanced",
@@ -14,6 +13,7 @@ const coursesData = [
     price: 2999,
     oldPrice: 6000,
     discount: "50% OFF",
+    videoUrl: "https://www.youtube.com/embed/NRmAXDWJVnU",
     about: `Learn the fundamentals of Generative AI and how to build your own AI-powered applications. 
             Gain hands-on experience with GPT, and other cutting-edge tools in this practical bootcamp.`,
     skills: [
@@ -36,7 +36,6 @@ const coursesData = [
     ]
   },
 
-  // you can add more courses here 👇
   {
     id: "fullstack",
     level: "Beginner to Advanced",
@@ -48,6 +47,7 @@ const coursesData = [
     price: 3499,
     oldPrice: 7000,
     discount: "50% OFF",
+    videoUrl: "https://www.youtube.com/embed/wS974JC_CoE",
     about: `Master both frontend and backend development with hands-on projects in React, Node.js, databases, and deployment. Build real-world applications and become a versatile fullstack developer.`,
     skills: [
       "Modern JavaScript (ES6+)",
@@ -68,7 +68,6 @@ const coursesData = [
     ]
   },
 
-  // ================= Cloud Computing =================
   {
     id: "cloud-computing",
     level: "Beginner to Advanced",
@@ -80,6 +79,7 @@ const coursesData = [
     price: 3499,
     oldPrice: 7000,
     discount: "50% OFF",
+  videoUrl: "https://www.youtube.com/embed/M988_fsOSWo",
     about: `Master cloud platforms including AWS, Azure, and Google Cloud. Learn cloud architecture, services, 
             and how to deploy scalable applications in the cloud.`,
     skills: [
@@ -101,7 +101,6 @@ const coursesData = [
     ],
   },
 
-  // ================= Cyber Security =================
   {
     id: "cyber-security",
     level: "Beginner to Professional",
@@ -113,6 +112,7 @@ const coursesData = [
     price: 2999,
     oldPrice: 6500,
     discount: "55% OFF",
+    videoUrl: "https://www.youtube.com/embed/inWWhr5tnEA",
     about: `Learn ethical hacking, penetration testing, and cyber defense strategies. 
             Protect systems, networks, and applications from real-world cyber threats.`,
     skills: [

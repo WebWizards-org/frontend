@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import AdminDashboard from './AdminDashboard';
-import TeacherDashboard from './TeacherDashboard';
+import InstructorDashboard from './InstructorDashboard';
 import StudentDashboard from './StudentDashboard';
 
 function RoleBasedDashboard() {
@@ -14,8 +14,8 @@ function RoleBasedDashboard() {
   switch (user.role) {
     case 'admin':
       return <AdminDashboard />;
-    case 'teacher':
-      return <TeacherDashboard />;
+    case 'instructor':
+      return <InstructorDashboard />;
     case 'student':
       return <StudentDashboard />;
     default:

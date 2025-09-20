@@ -35,6 +35,21 @@ function CoursePage({ course }) {
         <h2 className="pt-5 font-bold text-2xl text-[#17324e] pl-5">About this Course</h2>
         <div className="mt-4 text-gray-700 text-base leading-relaxed pl-5">{course.about}</div>
 
+        {course.videoUrl && (
+          <div className="my-6 w-full flex justify-center">
+            <iframe
+              src={course.videoUrl}
+              width={800}
+              height={450}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title="Course Video"
+              style={{ borderRadius: '12px' }}
+            ></iframe>
+          </div>
+        )}
+
         <div className="p-5">
           <h2 className="pt-5 font-bold text-2xl text-[#17324e]">What You'll Learn</h2>
           <div className="grid md:grid-cols-2 gap-4 mt-5">
