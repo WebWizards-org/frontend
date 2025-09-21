@@ -12,6 +12,8 @@ import ContactUs from "./components/ContactUs.jsx";
 import RoleBasedDashboard from "./components/RoleBasedDashboard.jsx";
 import coursesData from "./utils/CourseData.js";
 import CoursePage from "./pages/CoursePage.jsx";
+import CreateCourse from "./pages/CreateCourse.jsx";
+import ShowCourses from "./pages/ShowCourses.jsx";
 
 const ProtectedRoute = ({ children }) => {
   const { token } = useAuth();
@@ -63,6 +65,8 @@ function App() {
               // </ProtectedRoute>
             }
           />
+          <Route path="/create" element={<CreateCourse />} />
+          <Route path="/show" element={<ShowCourses />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
