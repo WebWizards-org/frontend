@@ -1,5 +1,11 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useParams,
+} from "react-router-dom";
 import Signup from "./components/Signup.jsx";
 import Login from "./components/Login.jsx";
 import Home from "./components/home.jsx";
@@ -14,6 +20,8 @@ import coursesData from "./utils/CourseData.js";
 import CoursePage from "./pages/CoursePage.jsx";
 import CreateCourse from "./pages/CreateCourse.jsx";
 import ShowCourses from "./pages/ShowCourses.jsx";
+import UpdateCourse from "./pages/Updatecourse";
+import UserProfile from "./pages/UserProfile";
 
 const ProtectedRoute = ({ children }) => {
   const { token } = useAuth();
@@ -67,6 +75,8 @@ function App() {
           />
           <Route path="/create" element={<CreateCourse />} />
           <Route path="/show" element={<ShowCourses />} />
+          <Route path="/update-course/:id" element={<UpdateCourse />} />
+          <Route path="/user/:id" element={<UserProfile />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
@@ -74,4 +84,3 @@ function App() {
 }
 
 export default App;
-

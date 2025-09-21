@@ -1,40 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-function CreateCourse() {
-  const [file, setFile] = useState();
+function UpdateCourse() {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [file, setFile] = useState();
 
-  const handleUpload = (e) => {
+  useEffect(() => {
+    // Fetch existing course details
+    axios
+      .get(`http://localhost:3001/api/courses/${id}`)
+      .then((res) => {
+        const course = res.data;
+        setTitle(course.title || "");
+        setDescription(course.description || "");
+        setPrice(course.price || "");
+      })
+      .catch(() => {
+        alert("Failed to fetch course details");
+      });
+  }, [id]);
+
+  const handleUpdate = (e) => {
     e.preventDefault();
     const formdata = new FormData();
-    formdata.append("image", file);
     formdata.append("title", title);
     formdata.append("description", description);
     formdata.append("price", price);
+    if (file) formdata.append("image", file);
 
     axios
-      .post("http://localhost:3001/api/courses", formdata, {
+      .put(`http://localhost:3001/api/courses/${id}`, formdata, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "multipart/form-data",
         },
       })
-      .then((res) => {
-        setTitle("");
-        setDescription("");
-        setPrice("");
-        setFile(null);
-        alert("Course uploaded successfully!");
+      .then(() => {
+        alert("Course updated successfully!");
+        navigate("/dashboard");
       })
       .catch((err) => {
         alert(
           err.response?.data?.message ||
-            "Error uploading course. Please try again."
+            "Error updating course. Please try again."
         );
       });
   };
@@ -45,10 +60,10 @@ function CreateCourse() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center py-10">
         <div className="max-w-2xl w-full mx-auto bg-white rounded-3xl shadow-2xl p-10">
           <h2 className="text-3xl font-extrabold text-blue-700 mb-6 text-center">
-            Create a New Course
+            Update Course
           </h2>
           <form
-            onSubmit={handleUpload}
+            onSubmit={handleUpdate}
             className="space-y-6"
           >
             <div>
@@ -98,14 +113,13 @@ function CreateCourse() {
                 type="file"
                 onChange={(e) => setFile(e.target.files[0])}
                 className="w-full border border-blue-300 p-3 rounded-lg"
-                required
               />
             </div>
             <button
               type="submit"
               className="bg-blue-600 text-white px-6 py-3 rounded-lg w-full font-bold text-lg hover:bg-blue-700 transition"
             >
-              Upload
+              Update Course
             </button>
           </form>
         </div>
@@ -115,4 +129,4 @@ function CreateCourse() {
   );
 }
 
-export default CreateCourse;
+export default UpdateCourse;
