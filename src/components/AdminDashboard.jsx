@@ -10,13 +10,13 @@ import {
   DollarSign,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import DashCard from "./DashCard";
 import UserList from "./UserList";
 import axios from "axios";
 
 function AdminDashboard() {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("dashboard");
 
@@ -90,8 +90,13 @@ function AdminDashboard() {
         <SidebarItem
           icon={<CircleUser size={20} />}
           text="Profile"
-          active={activeSection === "profile"}
-          onClick={() => setActiveSection("profile")}
+          onClick={() => {
+            console.log("Profile clicked in AdminDashboard");
+            const userId = user?._id || user?.id;
+            if (userId) {
+              navigate(`/user/${userId}`);
+            }
+          }}
         />
         <SidebarItem
           icon={<LogOut size={20} />}

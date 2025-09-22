@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { getToken } from "../utils/cookieUtils";
 
 function UpdateCourse() {
   const { id } = useParams();
@@ -38,7 +39,7 @@ function UpdateCourse() {
     axios
       .put(`http://localhost:3001/api/courses/${id}`, formdata, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${getToken()}`,
           "Content-Type": "multipart/form-data",
         },
       })
@@ -62,10 +63,7 @@ function UpdateCourse() {
           <h2 className="text-3xl font-extrabold text-blue-700 mb-6 text-center">
             Update Course
           </h2>
-          <form
-            onSubmit={handleUpdate}
-            className="space-y-6"
-          >
+          <form onSubmit={handleUpdate} className="space-y-6">
             <div>
               <label className="block text-gray-700 font-semibold mb-2">
                 Title

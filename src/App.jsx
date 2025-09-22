@@ -22,12 +22,26 @@ import CreateCourse from "./pages/CreateCourse.jsx";
 import ShowCourses from "./pages/ShowCourses.jsx";
 import UpdateCourse from "./pages/Updatecourse";
 import UserProfile from "./pages/UserProfile";
+import Cart from "./pages/Cart";
 
 const ProtectedRoute = ({ children }) => {
-  const { token } = useAuth();
+  const { token, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!token) {
     return <Navigate to="/login" />;
   }
+
   return children;
 };
 
@@ -73,10 +87,26 @@ function App() {
               // </ProtectedRoute>
             }
           />
-          <Route path="/create" element={<CreateCourse />} />
+          <Route path="/create-course" element={<CreateCourse />} />
           <Route path="/show" element={<ShowCourses />} />
           <Route path="/update-course/:id" element={<UpdateCourse />} />
-          <Route path="/user/:id" element={<UserProfile />} />
+          <Route
+            path="/user/:id"
+            element={
+              <ProtectedRoute>
+                <UserProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <UserProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/cart" element={<Cart />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

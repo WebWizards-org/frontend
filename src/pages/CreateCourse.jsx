@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { getToken } from "../utils/cookieUtils";
 
 function CreateCourse() {
   const [file, setFile] = useState();
@@ -20,7 +21,7 @@ function CreateCourse() {
     axios
       .post("http://localhost:3001/api/courses", formdata, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${getToken()}`,
           "Content-Type": "multipart/form-data",
         },
       })
@@ -47,10 +48,7 @@ function CreateCourse() {
           <h2 className="text-3xl font-extrabold text-blue-700 mb-6 text-center">
             Create a New Course
           </h2>
-          <form
-            onSubmit={handleUpload}
-            className="space-y-6"
-          >
+          <form onSubmit={handleUpload} className="space-y-6">
             <div>
               <label className="block text-gray-700 font-semibold mb-2">
                 Title

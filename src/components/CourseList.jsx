@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Trash2, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UpdateCourse from "../pages/Updatecourse";
+import { getToken } from "../utils/cookieUtils";
 function CourseList() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +35,7 @@ function CourseList() {
         const res = await fetch(`http://localhost:3001/api/courses/${id}`, {
           method: "DELETE",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${getToken()}`,
           },
         });
         const data = await res.json();

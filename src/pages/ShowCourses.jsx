@@ -5,13 +5,20 @@ import Footer from "../components/Footer";
 
 function ShowCourses() {
   const [courses, setCourses] = useState([]);
+  const [cart, setCart] = useState(() => {
+    // Load cart from localStorage on first render
+    const saved = localStorage.getItem("cart");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   useEffect(() => {
     fetch("http://localhost:3001/api/allCourses")
       .then((res) => res.json())
       .then((data) => {
+        console.log("Courses data received:", data);
         if (Array.isArray(data)) {
           setCourses(data);
+          console.log("Sample course with instructor:", data[0]?.instructor);
         } else if (data && Array.isArray(data.courses)) {
           setCourses(data.courses);
         } else {
@@ -20,6 +27,21 @@ function ShowCourses() {
       })
       .catch((err) => console.log(err));
   }, []);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
+  const handleAddToCart = (course) => {
+    // Prevent duplicates
+    if (cart.find((item) => item._id === course._id)) {
+      alert("Course already in cart!");
+      return;
+    }
+    setCart([...cart, course]);
+    alert("Course added to cart!");
+  };
 
   return (
     <>
@@ -87,6 +109,14 @@ function ShowCourses() {
                 )}
                 <div className="p-4 flex flex-col flex-1">
                   <h3 className="font-bold text-lg mb-2">{course.title}</h3>
+                  {course.instructor && (
+                    <p className="text-gray-600 text-sm mb-2">
+                      by{" "}
+                      <span className="font-semibold text-blue-600">
+                        {course.instructor.name}
+                      </span>
+                    </p>
+                  )}
                   <div className="flex items-center justify-between mt-auto">
                     <span className="flex items-center gap-1 text-yellow-500 font-semibold">
                       <Star className="w-5 h-5 fill-yellow-500" />
@@ -100,8 +130,16 @@ function ShowCourses() {
                     <Clock className="w-4 h-4" />
                     <span>Duration: {course.hours ?? "N/A"} hrs</span>
                   </div>
-                  <button className="bg-blue-700 text-white px-5 py-2 mt-4 rounded-md w-full hover:bg-blue-800 transition">
-                    Explore Course
+                  {course.studentsEnrolled > 0 && (
+                    <div className="text-gray-500 text-sm mt-1">
+                      {course.studentsEnrolled} students enrolled
+                    </div>
+                  )}
+                  <button
+                    className="bg-blue-700 text-white px-5 py-2 mt-4 rounded-md w-full hover:bg-blue-800 transition"
+                    onClick={() => handleAddToCart(course)}
+                  >
+                    Add to cart
                   </button>
                 </div>
               </div>

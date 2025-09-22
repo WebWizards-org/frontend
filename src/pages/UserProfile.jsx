@@ -1,72 +1,311 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import {
+  User,
+  Mail,
+  Phone,
+  Shield,
+  BookOpen,
+  Calendar,
+  Award,
+} from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { getToken } from "../utils/cookieUtils";
+import { useAuth } from "../context/AuthContext";
 
 function UserProfile() {
   const { id } = useParams();
+  const { user: currentUser } = useAuth();
   const [user, setUser] = useState(null);
+  const [userCourses, setUserCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Use current user's ID if no ID is provided in URL
+  const profileUserId = id || currentUser?._id;
 
   useEffect(() => {
-    fetch(`http://localhost:3001/api/protected/user/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setUser(data);
+    const fetchUserData = async () => {
+      if (!profileUserId) {
+        setError("No user ID provided");
         setLoading(false);
-      })
-      .catch(() => {
+        return;
+      }
+
+      try {
+        setLoading(true);
+
+        // Fetch user profile
+        const userResponse = await fetch(
+          `http://localhost:3001/api/protected/user/${profileUserId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!userResponse.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+
+        const userData = await userResponse.json();
+        setUser(userData);
+
+        // If user is an instructor, fetch their courses
+        if (userData.role === "instructor") {
+          try {
+            // If viewing current user's profile, use my-courses endpoint
+            // Otherwise, fetch courses by instructor ID
+            const coursesEndpoint =
+              !id || id === currentUser?._id
+                ? "http://localhost:3001/api/my-courses"
+                : `http://localhost:3001/api/courses/instructor/${profileUserId}`;
+
+            const coursesResponse = await fetch(coursesEndpoint, {
+              headers: {
+                Authorization: `Bearer ${getToken()}`,
+                "Content-Type": "application/json",
+              },
+            });
+
+            if (coursesResponse.ok) {
+              const coursesData = await coursesResponse.json();
+              setUserCourses(coursesData);
+            }
+          } catch (coursesError) {
+            console.error("Error fetching instructor courses:", coursesError);
+          }
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
         setLoading(false);
-      });
-  }, [id]);
+      }
+    };
+
+    fetchUserData();
+  }, [profileUserId, id, currentUser?._id]);
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const getRoleColor = (role) => {
+    switch (role) {
+      case "admin":
+        return "bg-red-100 text-red-800";
+      case "instructor":
+        return "bg-green-100 text-green-800";
+      case "student":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
 
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center py-10">
-        <div className="max-w-lg w-full mx-auto bg-white rounded-3xl shadow-2xl p-10">
-          <h2 className="text-3xl font-extrabold text-blue-700 mb-6 text-center">
-            User Profile
-          </h2>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-10">
+        <div className="max-w-6xl mx-auto px-4">
           {loading ? (
-            <div className="text-center text-gray-500">Loading...</div>
-          ) : user ? (
-            <div className="space-y-6">
-              <div>
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Name
-                </label>
-                <div className="w-full border border-blue-300 p-3 rounded-lg bg-blue-50 text-gray-800">
-                  {user.name}
-                </div>
-              </div>
-              <div>
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Email
-                </label>
-                <div className="w-full border border-blue-300 p-3 rounded-lg bg-blue-50 text-gray-800">
-                  {user.email}
-                </div>
-              </div>
-              <div>
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Number
-                </label>
-                <div className="w-full border border-blue-300 p-3 rounded-lg bg-blue-50 text-gray-800">
-                  {user.number || "N/A"}
-                </div>
-              </div>
-              <div>
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Role
-                </label>
-                <div className="w-full border border-blue-300 p-3 rounded-lg bg-blue-50 text-gray-800">
-                  {user.role}
-                </div>
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                <p className="mt-4 text-gray-600">Loading user profile...</p>
               </div>
             </div>
+          ) : error ? (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-center">
+              Error: {error}
+            </div>
+          ) : user ? (
+            <div className="space-y-8">
+              {/* Header Section */}
+              <div className="bg-white rounded-2xl shadow-xl p-8">
+                <div className="flex items-center space-x-6">
+                  <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <User className="w-12 h-12 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                      {user.name}
+                    </h1>
+                    <div className="flex items-center space-x-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${getRoleColor(
+                          user.role
+                        )}`}
+                      >
+                        {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                      </span>
+                      {user.createdAt && (
+                        <span className="text-gray-500 text-sm flex items-center">
+                          <Calendar className="w-4 h-4 mr-1" />
+                          Member since {formatDate(user.createdAt)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Information */}
+              <div className="bg-white rounded-2xl shadow-xl p-8">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                  Contact Information
+                </h2>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <Mail className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Email Address</p>
+                      <p className="text-lg font-medium text-gray-900">
+                        {user.email}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                      <Phone className="w-5 h-5 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Phone Number</p>
+                      <p className="text-lg font-medium text-gray-900">
+                        {user.number || "Not provided"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Statistics */}
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="bg-white rounded-2xl shadow-xl p-6 text-center">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <BookOpen className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    {user.role === "instructor"
+                      ? userCourses.length
+                      : user.purchasedCourses?.length || 0}
+                  </h3>
+                  <p className="text-gray-500">
+                    {user.role === "instructor"
+                      ? "Courses Created"
+                      : "Courses Enrolled"}
+                  </p>
+                </div>
+
+                {user.role === "instructor" && (
+                  <>
+                    <div className="bg-white rounded-2xl shadow-xl p-6 text-center">
+                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <User className="w-6 h-6 text-green-600" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-gray-900">
+                        {userCourses.reduce(
+                          (total, course) => total + course.studentsEnrolled,
+                          0
+                        )}
+                      </h3>
+                      <p className="text-gray-500">Total Students</p>
+                    </div>
+
+                    <div className="bg-white rounded-2xl shadow-xl p-6 text-center">
+                      <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <Award className="w-6 h-6 text-yellow-600" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-gray-900">
+                        {userCourses.length > 0
+                          ? (
+                              userCourses.reduce(
+                                (total, course) => total + course.rating,
+                                0
+                              ) / userCourses.length
+                            ).toFixed(1)
+                          : "0.0"}
+                      </h3>
+                      <p className="text-gray-500">Average Rating</p>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Courses Section */}
+              {user.role === "instructor" && userCourses.length > 0 && (
+                <div className="bg-white rounded-2xl shadow-xl p-8">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                    Created Courses
+                  </h2>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {userCourses.map((course) => (
+                      <div
+                        key={course._id}
+                        className="border rounded-xl p-4 hover:shadow-lg transition-shadow"
+                      >
+                        {course.image && (
+                          <img
+                            src={`http://localhost:3001/images/${course.image}`}
+                            alt={course.title}
+                            className="w-full h-32 object-cover rounded-lg mb-3"
+                          />
+                        )}
+                        <h3 className="font-bold text-lg mb-2">
+                          {course.title}
+                        </h3>
+                        <div className="flex justify-between items-center text-sm text-gray-600">
+                          <span>₹{course.price}</span>
+                          <span>⭐ {course.rating}</span>
+                        </div>
+                        <div className="text-sm text-gray-500 mt-1">
+                          {course.studentsEnrolled} students enrolled
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {user.role === "student" &&
+                user.purchasedCourses &&
+                user.purchasedCourses.length > 0 && (
+                  <div className="bg-white rounded-2xl shadow-xl p-8">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                      Enrolled Courses
+                    </h2>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {user.purchasedCourses.map((course) => (
+                        <div
+                          key={course._id}
+                          className="border rounded-xl p-4 hover:shadow-lg transition-shadow"
+                        >
+                          <h3 className="font-bold text-lg mb-2">
+                            {course.title}
+                          </h3>
+                          <div className="flex justify-between items-center text-sm text-gray-600">
+                            <span>₹{course.price}</span>
+                            <span>⭐ {course.rating}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+            </div>
           ) : (
-            <div className="text-center text-gray-500">User not found.</div>
+            <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded-lg text-center">
+              User not found.
+            </div>
           )}
         </div>
       </div>

@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import Hamburger from "hamburger-react";
 import { useAuth } from "../context/AuthContext";
+import { CircleUser, ShoppingCart } from "lucide-react";
 
 function Navbar() {
   const [isOpen, setOpen] = useState(false);
-  const { token, user, logout } = useAuth();
+  const { token, user } = useAuth();
   const navigate = useNavigate();
+
+  const isStudent = user?.role === "student" || user?.role === "Student";
 
   return (
     <div className="bg-white sticky top-0 w-full z-50 shadow-md left-0">
@@ -31,7 +34,7 @@ function Navbar() {
             >
               Home
             </NavLink>
-            <NavLink>Services</NavLink>
+            <NavLink to='/show'>Courses</NavLink>
             <NavLink>About</NavLink>
             <NavLink to="/contactUs">Contact</NavLink>
           </div>
@@ -51,17 +54,23 @@ function Navbar() {
               </>
             ) : (
               <>
-                <span className="py-2 font-semibold text-blue-600">
-                  Welcome, {user?.name}
-                </span>
+                {isStudent && (
+                  <button
+                    onClick={() => navigate("/cart")}
+                    className="bg-pink-100 hover:bg-pink-200 text-pink-700 px-4 py-2 rounded-full flex items-center gap-2 font-semibold"
+                    title="Cart"
+                  >
+                    <ShoppingCart size={22} />
+                    Cart
+                  </button>
+                )}
                 <button
-                  onClick={() => {
-                    logout();
-                    navigate("/login");
-                  }}
-                  className="bg-red-600 py-2.5 px-6 rounded-4xl text-white font-semibold"
+                  onClick={() => navigate("/dashboard")}
+                  className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded-full flex items-center gap-2 font-semibold"
+                  title="Profile/Dashboard"
                 >
-                  Logout
+                  <CircleUser size={22} />
+                  {user?.name?.split(" ")[0] || "Profile"}
                 </button>
               </>
             )}
@@ -77,7 +86,7 @@ function Navbar() {
             <div className="md:hidden  bg-white shadow-lg px-6 py-3 space-y-2 text-center font-semibold">
               <hr className="opacity-20 w-[100%]" />
               <NavLink className="block">Home</NavLink>
-              <NavLink className="block">Services</NavLink>
+              <NavLink to='/show' className="block">Courses</NavLink>
               <NavLink className="block">About</NavLink>
               <NavLink className="block">Contact</NavLink>
               <hr className="opacity-20 w-[100%]" />
@@ -96,17 +105,21 @@ function Navbar() {
                 </>
               ) : (
                 <>
-                  <span className="block py-2 font-semibold text-blue-600">
-                    Welcome, {user?.name}
-                  </span>
+                  {isStudent && (
+                    <button
+                      onClick={() => navigate("/cart")}
+                      className="p-2 bg-pink-100 hover:bg-pink-200 text-pink-700 font-bold rounded-full w-full flex items-center justify-center gap-2"
+                    >
+                      <ShoppingCart size={22} />
+                      Cart
+                    </button>
+                  )}
                   <button
-                    onClick={() => {
-                      logout();
-                      navigate("/login");
-                    }}
-                    className="p-2 bg-red-600 text-white font-bold rounded-md w-full"
+                    onClick={() => navigate("/dashboard")}
+                    className="p-2 bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold rounded-full w-full flex items-center justify-center gap-2"
                   >
-                    Logout
+                    <CircleUser size={22} />
+                    {user?.name?.split(" ")[0] || "Profile"}
                   </button>
                 </>
               )}

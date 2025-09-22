@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar, { SidebarItem } from "./Sidebar";
 import {
   LayoutDashboard,
@@ -11,12 +11,54 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import DashCard from "./DashCard";
-import CourseList from "./CourseList";
+import InstructorCourseList from "./InstructorCourseList";
+import axios from "axios";
 
 function InstructorDashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [courseCount, setCourseCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch instructor's courses count
+  useEffect(() => {
+    const fetchCourseCount = async () => {
+      try {
+        const token =
+          localStorage.getItem("token") ||
+          document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
+        const response = await axios.get(
+          "http://localhost:3001/api/my-courses",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setCourseCount(response.data.length);
+      } catch (error) {
+        console.error("Error fetching course count:", error);
+        setCourseCount(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchCourseCount();
+    }
+  }, [user]);
 
   const handleLogout = () => {
     logout();
@@ -24,16 +66,21 @@ function InstructorDashboard() {
   };
 
   const handleProfileClick = () => {
-    if (user?._id) {
-      navigate(`/user/${user._id}`);
+    console.log("Profile clicked, user:", user);
+    const userId = user?._id || user?.id;
+    if (userId) {
+      console.log("Navigating to:", `/user/${userId}`);
+      navigate(`/user/${userId}`);
+    } else {
+      console.log("No user ID found");
     }
   };
 
   const dashData = [
     {
       title: "My Courses",
-      value: "8",
-      change: "+2 this month",
+      value: loading ? "..." : courseCount.toString(),
+      change: courseCount > 0 ? `${courseCount} total` : "No courses yet",
       icon: BookOpen,
     },
     { title: "Enrolled Students", value: "320", change: "+15", icon: Users },
@@ -63,9 +110,11 @@ function InstructorDashboard() {
         <SidebarItem icon={<Users size={20} />} text="Students" />
         <SidebarItem icon={<MessageSquare size={20} />} text="Messages" />
         <hr className="text-zinc-200" />
-        <Link to={user?._id ? `/user/${user._id}` : "#"} className="w-full">
-          <SidebarItem icon={<CircleUser size={20} />} text="Profile" />
-        </Link>
+        <SidebarItem
+          icon={<CircleUser size={20} />}
+          text="Profile"
+          onClick={handleProfileClick}
+        />
         <SidebarItem
           icon={<LogOut size={20} />}
           text="Logout"
@@ -92,7 +141,7 @@ function InstructorDashboard() {
             </div>
           </>
         )}
-        {activeSection === "courses" && <CourseList />}
+        {activeSection === "courses" && <InstructorCourseList />}
       </main>
     </div>
   );
