@@ -3,7 +3,7 @@ import { Trash2, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UpdateCourse from "../pages/Updatecourse";
 import { getToken } from "../utils/cookieUtils";
-function CourseList() {
+function CourseList({ showEdit = true }) {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
@@ -82,14 +82,16 @@ function CourseList() {
                 </td>
                 <td className="py-3 px-4">{course.rating ?? "N/A"}</td>
                 <td className="py-3 px-4 flex justify-center gap-4">
-                  <button
-                    onClick={() => handleEdit(course._id)}
-                    className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-3 py-1 rounded transition flex items-center gap-1"
-                    title="Edit"
-                  >
-                    <Pencil size={18} />
-                    Edit
-                  </button>
+                  {showEdit && (
+                    <button
+                      onClick={() => handleEdit(course._id)}
+                      className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-3 py-1 rounded transition flex items-center gap-1"
+                      title="Edit"
+                    >
+                      <Pencil size={18} />
+                      Edit
+                    </button>
+                  )}
                   <button
                     onClick={() => handleDelete(course._id)}
                     className={`bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded transition flex items-center gap-1 ${

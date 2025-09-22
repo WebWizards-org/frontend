@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar, { SidebarItem } from "./Sidebar";
 import {
   LayoutDashboard,
@@ -15,12 +15,51 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import DashCard from "./DashCard";
 import Cart from "../pages/Cart";
-import CourseList from "./CourseList";
+import StudentCourseList from "./StudentCourseList";
+import { getToken } from "../utils/cookieUtils";
 
 function StudentDashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [purchasedCoursesCount, setPurchasedCoursesCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch student's purchased courses count
+  useEffect(() => {
+    const fetchPurchasedCoursesCount = async () => {
+      try {
+        const token = getToken();
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch(
+          "http://localhost:3001/api/protected/student/courses",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const courses = await response.json();
+          setPurchasedCoursesCount(courses.length);
+        }
+      } catch (error) {
+        console.error("Error fetching purchased courses count:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchPurchasedCoursesCount();
+    }
+  }, [user]);
 
   const handleLogout = () => {
     logout();
@@ -36,8 +75,11 @@ function StudentDashboard() {
   const dashData = [
     {
       title: "Courses Enrolled",
-      value: "5",
-      change: "+1 this month",
+      value: loading ? "..." : purchasedCoursesCount.toString(),
+      change:
+        purchasedCoursesCount > 0
+          ? `${purchasedCoursesCount} total`
+          : "No courses yet",
       icon: BookOpen,
     },
     { title: "Messages", value: "2", change: "0 unread", icon: MessageSquare },
@@ -110,7 +152,7 @@ function StudentDashboard() {
             </div>
           </>
         )}
-        {activeSection === "courses" && <CourseList />}
+        {activeSection === "courses" && <StudentCourseList />}
         {activeSection === "cart" && <Cart />}
         {activeSection === "home" && (
           <div className="mt-10 ml-4">

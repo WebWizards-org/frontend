@@ -13,6 +13,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import DashCard from "./DashCard";
 import UserList from "./UserList";
+import CourseList from "./CourseList";
 import axios from "axios";
 
 function AdminDashboard() {
@@ -23,6 +24,7 @@ function AdminDashboard() {
   // State for actual counts
   const [studentCount, setStudentCount] = useState(0);
   const [instructorCount, setInstructorCount] = useState(0);
+  const [courseCount, setCourseCount] = useState(0);
 
   useEffect(() => {
     // Fetch students count
@@ -35,6 +37,17 @@ function AdminDashboard() {
       .get("http://localhost:3001/api/protected/instructors")
       .then((res) => setInstructorCount(res.data.length))
       .catch(() => setInstructorCount(0));
+    // Fetch courses count
+    axios
+      .get("http://localhost:3001/api/allCourses")
+      .then((res) => {
+        if (Array.isArray(res.data)) {
+          setCourseCount(res.data.length);
+        } else if (res.data && Array.isArray(res.data.courses)) {
+          setCourseCount(res.data.courses.length);
+        }
+      })
+      .catch(() => setCourseCount(0));
   }, []);
 
   const dashData = [
@@ -50,7 +63,12 @@ function AdminDashboard() {
       change: "+5%",
       icon: GraduationCap,
     },
-    { title: "Courses", value: "120", change: "+8%", icon: BookOpen },
+    {
+      title: "Courses",
+      value: courseCount || 0,
+      change: "+8%",
+      icon: BookOpen,
+    },
     { title: "Revenues", value: "$50K", change: "+15%", icon: DollarSign },
   ];
 
@@ -128,6 +146,11 @@ function AdminDashboard() {
         {activeSection === "students" && (
           <div className="mt-10 ml-4">
             <UserList type="student" />
+          </div>
+        )}
+        {activeSection === "courses" && (
+          <div className="mt-10 ml-4">
+            <CourseList showEdit={false} />
           </div>
         )}
         {/* Add other sections as needed */}

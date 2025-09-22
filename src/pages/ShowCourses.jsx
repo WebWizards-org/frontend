@@ -2,45 +2,140 @@ import React, { useState, useEffect } from "react";
 import { Star, Clock } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useAuth } from "../context/AuthContext";
+import { getToken } from "../utils/cookieUtils";
 
 function ShowCourses() {
   const [courses, setCourses] = useState([]);
-  const [cart, setCart] = useState(() => {
-    // Load cart from localStorage on first render
-    const saved = localStorage.getItem("cart");
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
+  // Fetch courses and cart
   useEffect(() => {
-    fetch("http://localhost:3001/api/allCourses")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Courses data received:", data);
-        if (Array.isArray(data)) {
-          setCourses(data);
-          console.log("Sample course with instructor:", data[0]?.instructor);
-        } else if (data && Array.isArray(data.courses)) {
-          setCourses(data.courses);
+    const fetchData = async () => {
+      try {
+        // Fetch courses
+        const coursesResponse = await fetch(
+          "http://localhost:3001/api/allCourses"
+        );
+        const coursesData = await coursesResponse.json();
+
+        if (Array.isArray(coursesData)) {
+          setCourses(coursesData);
+        } else if (coursesData && Array.isArray(coursesData.courses)) {
+          setCourses(coursesData.courses);
         } else {
           setCourses([]);
         }
-      })
-      .catch((err) => console.log(err));
-  }, []);
 
-  // Save cart to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+        // Fetch cart if user is logged in
+        if (user) {
+          try {
+            const token = getToken();
+            const cartResponse = await fetch(
+              "http://localhost:3001/api/protected/cart",
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
 
-  const handleAddToCart = (course) => {
-    // Prevent duplicates
-    if (cart.find((item) => item._id === course._id)) {
+            if (cartResponse.ok) {
+              const cartData = await cartResponse.json();
+              setCart(cartData);
+            }
+          } catch (cartError) {
+            console.error("Error fetching cart:", cartError);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
+  const handleAddToCart = async (course) => {
+    if (!user) {
+      alert("Please login to add courses to cart");
+      return;
+    }
+
+    // Check if already in cart (frontend check)
+    const courseInCart = cart.find((item) => item._id === course._id);
+    console.log("Course in cart check:", {
+      courseId: course._id,
+      cartLength: cart.length,
+      courseInCart: !!courseInCart,
+      cartIds: cart.map((item) => item._id),
+    });
+
+    if (courseInCart) {
       alert("Course already in cart!");
       return;
     }
-    setCart([...cart, course]);
-    alert("Course added to cart!");
+
+    try {
+      const token = getToken();
+      console.log("Token found:", token ? "Yes" : "No");
+      console.log("User:", user);
+      console.log("Course ID:", course._id);
+
+      if (!token) {
+        alert("Authentication token not found. Please login again.");
+        return;
+      }
+
+      const response = await fetch("http://localhost:3001/api/protected/cart", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ courseId: course._id }),
+      });
+
+      console.log("Response status:", response.status);
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Cart updated successfully:", data);
+        setCart(data.cart);
+        alert("Course added to cart!");
+      } else {
+        const errorData = await response.json();
+        console.error("Server error:", errorData);
+
+        // If it's already in cart, refresh cart state from backend
+        if (errorData.message === "Course already in cart") {
+          // Refresh cart from backend to sync state
+          const cartResponse = await fetch(
+            "http://localhost:3001/api/protected/cart",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          if (cartResponse.ok) {
+            const cartData = await cartResponse.json();
+            setCart(cartData);
+          }
+        }
+
+        alert(errorData.message || "Failed to add course to cart");
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Error adding course to cart: " + error.message);
+    }
   };
 
   return (
