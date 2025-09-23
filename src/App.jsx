@@ -88,7 +88,7 @@ function App() {
             }
           />
           <Route path="/create-course" element={<CreateCourse />} />
-          <Route path="/show" element={<ShowCourses />} />
+          <Route path="/show-courses" element={<ShowCourses />} />
           <Route path="/update-course/:id" element={<UpdateCourse />} />
           <Route
             path="/user/:id"

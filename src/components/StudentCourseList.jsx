@@ -163,7 +163,7 @@ function StudentCourseList() {
             className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg font-medium transition-colors duration-200"
             onClick={() => {
               // TODO: Navigate to course catalog
-              window.location.href = "/explore";
+              window.location.href = "/show-courses";
             }}
           >
             Explore Courses

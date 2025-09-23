@@ -187,7 +187,11 @@ function Cart() {
                     >
                       <div>
                         <h3 className="font-bold text-lg">{course.title}</h3>
-                        <p className="text-gray-600">{course.description}</p>
+                        <p className="text-gray-600 text-sm">
+                          {course.description && course.description.length > 100
+                            ? `${course.description.substring(0, 100)}...`
+                            : course.description}
+                        </p>
                         <span className="text-blue-600 font-bold">
                           ₹{course.price}
                         </span>
