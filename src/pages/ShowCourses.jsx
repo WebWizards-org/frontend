@@ -7,15 +7,16 @@ import { getToken } from "../utils/cookieUtils";
 
 function ShowCourses() {
   const [courses, setCourses] = useState([]);
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => {
+    const saved = localStorage.getItem("cart");
+    return saved ? JSON.parse(saved) : [];
+  });
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  // Fetch courses and cart
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch courses
         const coursesResponse = await fetch(
           "http://localhost:3001/api/allCourses"
         );
@@ -29,7 +30,6 @@ function ShowCourses() {
           setCourses([]);
         }
 
-        // Fetch cart if user is logged in
         if (user) {
           try {
             const token = getToken();
@@ -61,21 +61,17 @@ function ShowCourses() {
     fetchData();
   }, [user]);
 
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
   const handleAddToCart = async (course) => {
     if (!user) {
       alert("Please login to add courses to cart");
       return;
     }
 
-    // Check if already in cart (frontend check)
     const courseInCart = cart.find((item) => item._id === course._id);
-    console.log("Course in cart check:", {
-      courseId: course._id,
-      cartLength: cart.length,
-      courseInCart: !!courseInCart,
-      cartIds: cart.map((item) => item._id),
-    });
-
     if (courseInCart) {
       alert("Course already in cart!");
       return;
@@ -83,10 +79,6 @@ function ShowCourses() {
 
     try {
       const token = getToken();
-      console.log("Token found:", token ? "Yes" : "No");
-      console.log("User:", user);
-      console.log("Course ID:", course._id);
-
       if (!token) {
         alert("Authentication token not found. Please login again.");
         return;
@@ -101,35 +93,12 @@ function ShowCourses() {
         body: JSON.stringify({ courseId: course._id }),
       });
 
-      console.log("Response status:", response.status);
-
       if (response.ok) {
         const data = await response.json();
-        console.log("Cart updated successfully:", data);
         setCart(data.cart);
         alert("Course added to cart!");
       } else {
         const errorData = await response.json();
-        console.error("Server error:", errorData);
-
-        // If it's already in cart, refresh cart state from backend
-        if (errorData.message === "Course already in cart") {
-          // Refresh cart from backend to sync state
-          const cartResponse = await fetch(
-            "http://localhost:3001/api/protected/cart",
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          if (cartResponse.ok) {
-            const cartData = await cartResponse.json();
-            setCart(cartData);
-          }
-        }
-
         alert(errorData.message || "Failed to add course to cart");
       }
     } catch (error) {
@@ -192,18 +161,51 @@ function ShowCourses() {
           {courses.length > 0 ? (
             courses.map((course, idx) => (
               <div
-                key={course.image + idx}
+                key={course._id || idx}
                 className="bg-white rounded-xl shadow-md flex flex-col mb-6"
               >
-                {course.image && (
-                  <img
-                    src={`http://localhost:3001/images/${course.image}`}
-                    alt={course.title || ""}
-                    className="w-full h-48 object-cover rounded-t-xl"
-                  />
-                )}
+                <div className="relative w-full h-48 rounded-t-xl overflow-hidden">
+                  {course.image ? (
+                    <img
+                      src={`http://localhost:3001/images/${course.image}`}
+                      alt={course.title || "Course"}
+                      className="w-full h-full object-cover"
+                      onLoad={(e) => {
+                        console.log(
+                          `✅ Image loaded successfully: ${e.target.src}`
+                        );
+                      }}
+                      onError={(e) => {
+                        console.log(`❌ Failed to load: ${e.target.src}`);
+                        // Show fallback
+                        e.target.style.display = "none";
+                        const fallback =
+                          e.target.parentNode.querySelector(".fallback-image");
+                        if (fallback) fallback.style.display = "flex";
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className="fallback-image absolute inset-0 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 items-center justify-center"
+                    style={{ display: course.image ? "none" : "flex" }}
+                  >
+                    <div className="text-center">
+                      <div className="text-5xl mb-3">📚</div>
+                      <span className="text-gray-600 font-medium">
+                        Course Image
+                      </span>
+                      {course.image && (
+                        <div className="text-xs text-gray-400 mt-1">
+                          {course.image}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
                 <div className="p-4 flex flex-col flex-1">
-                  <h3 className="font-bold text-lg mb-2">{course.title}</h3>
+                  <h3 className="font-bold text-lg mb-2 line-clamp-2">
+                    {course.title}
+                  </h3>
                   {course.instructor && (
                     <p className="text-gray-600 text-sm mb-2">
                       by{" "}
@@ -215,7 +217,7 @@ function ShowCourses() {
                   <div className="flex items-center justify-between mt-auto">
                     <span className="flex items-center gap-1 text-yellow-500 font-semibold">
                       <Star className="w-5 h-5 fill-yellow-500" />
-                      {course.rating ?? 0}
+                      {course.rating || 0}
                     </span>
                     <span className="text-blue-600 font-bold text-md">
                       ₹{course.price}
@@ -223,7 +225,7 @@ function ShowCourses() {
                   </div>
                   <div className="flex items-center gap-2 text-gray-500 mt-2">
                     <Clock className="w-4 h-4" />
-                    <span>Duration: {course.hours ?? "N/A"} hrs</span>
+                    <span>Duration: {course.hours || "N/A"} hrs</span>
                   </div>
                   {course.studentsEnrolled > 0 && (
                     <div className="text-gray-500 text-sm mt-1">
@@ -231,7 +233,7 @@ function ShowCourses() {
                     </div>
                   )}
                   <button
-                    className="bg-blue-700 text-white px-5 py-2 mt-4 rounded-md w-full hover:bg-blue-800 transition"
+                    className="bg-blue-700 text-white px-5 py-2 mt-4 rounded-md w-full hover:bg-blue-800 transition duration-200"
                     onClick={() => handleAddToCart(course)}
                   >
                     Add to cart
@@ -241,7 +243,7 @@ function ShowCourses() {
             ))
           ) : (
             <p className="text-gray-500 text-center py-12 w-full">
-              No courses found
+              {loading ? "Loading courses..." : "No courses found"}
             </p>
           )}
         </section>

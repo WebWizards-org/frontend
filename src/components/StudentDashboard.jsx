@@ -108,12 +108,6 @@ function StudentDashboard() {
           active={activeSection === "messages"}
           onClick={() => setActiveSection("messages")}
         />
-        <SidebarItem
-          icon={<Settings size={20} />}
-          text="Settings"
-          active={activeSection === "settings"}
-          onClick={() => setActiveSection("settings")}
-        />
         <hr className="text-zinc-200" />
         <SidebarItem
           icon={<CircleUser size={20} />}
@@ -165,7 +159,7 @@ function StudentDashboard() {
         {activeSection === "messages" && (
           <div className="mt-10 ml-4">
             <h2 className="text-3xl font-bold text-blue-700 mb-6">Messages</h2>
-            <p>No new messages.</p>
+            <p>Coming soon...</p>
           </div>
         )}
         {activeSection === "settings" && (

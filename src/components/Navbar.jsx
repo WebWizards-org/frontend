@@ -34,7 +34,7 @@ function Navbar() {
             >
               Home
             </NavLink>
-            <NavLink to='/show'>Courses</NavLink>
+            <NavLink to='/show-courses'>Courses</NavLink>
             <NavLink>About</NavLink>
             <NavLink to="/contactUs">Contact</NavLink>
           </div>
