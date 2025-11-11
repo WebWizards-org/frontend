@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { getToken } from "../utils/cookieUtils";
 
 function CreateCourse() {
   const [file, setFile] = useState();
@@ -10,7 +9,7 @@ function CreateCourse() {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
 
-  const handleUpload = (e) => {
+  const handleUpload = async (e) => {
     e.preventDefault();
     const formdata = new FormData();
     formdata.append("image", file);
@@ -18,26 +17,21 @@ function CreateCourse() {
     formdata.append("description", description);
     formdata.append("price", price);
 
-    axios
-      .post("http://localhost:3001/api/courses", formdata, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        setTitle("");
-        setDescription("");
-        setPrice("");
-        setFile(null);
-        alert("Course uploaded successfully!");
-      })
-      .catch((err) => {
-        alert(
-          err.response?.data?.message ||
-            "Error uploading course. Please try again."
-        );
+    try {
+      const res = await axiosInstance.post("/courses", formdata, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
+      setTitle("");
+      setDescription("");
+      setPrice("");
+      setFile(null);
+      alert(res.data?.message || "Course uploaded successfully!");
+    } catch (err) {
+      alert(
+        err.response?.data?.message ||
+          "Error uploading course. Please try again."
+      );
+    }
   };
 
   return (

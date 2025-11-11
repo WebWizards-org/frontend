@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import api from '../utils/api';
-import { useAuth } from '../context/AuthContext';
-import PasswordIcon from '../icons/PasswordIcon';
-import EmailIcon from '../icons/EmailIcon';
-import EyeIcon from '../icons/EyeIcon';
-import EyeOffIcon from '../icons/EyeOffIcon';
-
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import PasswordIcon from "../icons/PasswordIcon";
+import EmailIcon from "../icons/EmailIcon";
+import EyeIcon from "../icons/EyeIcon";
+import EyeOffIcon from "../icons/EyeOffIcon";
+import api from "../utils/axiosInstance";
 function Login() {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
@@ -18,47 +17,70 @@ function Login() {
 
   const handlesubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted ✅");
 
     let newerrors = {};
     if (!email) newerrors.email = "Email is required!";
     if (!password) newerrors.password = "Password is required!";
 
     seterrors(newerrors);
-    console.log("Validation errors:", newerrors);
-
-    if (Object.keys(newerrors).length > 0) {
-      console.log("Validation failed ❌");
-      return;
-    }
+    if (Object.keys(newerrors).length > 0) return;
 
     try {
-      console.log("Sending request with:", { email, password });
+      console.debug("Login: sending", { email });
+      const response = await api.post("/auth/login", { email, password });
 
-      const response = await api.post('/login', {
-        email,
-        password,
-      });
+      console.debug("Login response raw:", response);
 
-      console.log("API Response ✅:", response.data);
-
-      if (response.data.token) {
-        login(response.data.token, response.data.user);
-        const userRole = response.data.user.role;
-        console.log("User Role:", userRole);
-
-        navigate('/');
-      } else {
-        console.warn("No token found in response ❌");
+      // guard if backend returned unexpected shape
+      if (!response || !response.data) {
+        seterrors({ general: "No response from server" });
+        return;
       }
+
+      const { token, user: respUser } = response.data || {};
+
+      if (!token) {
+        seterrors({
+          general: response.data?.message || "Login failed: no token",
+        });
+        return;
+      }
+
+      // decode fallback if server didn't return user object
+      const parseJwt = (t) => {
+        try {
+          const payload = t.split(".")[1];
+          const padded = payload.replace(/-/g, "+").replace(/_/g, "/");
+          const json = decodeURIComponent(
+            atob(padded)
+              .split("")
+              .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+              .join("")
+          );
+          return JSON.parse(json);
+        } catch {
+          return null;
+        }
+      };
+
+      let userObj = respUser;
+      if (!userObj && token) {
+        const payload = parseJwt(token) || {};
+        userObj = {
+          id: payload.id || payload.sub || null,
+          role: payload.role || "student",
+          email: payload.email,
+          name: payload.name,
+        };
+      }
+
+      login(token, userObj);
+      navigate("/");
     } catch (error) {
-      console.error("Login error ❌:", error);
-
-      if (error.response?.data?.message) {
-        seterrors({ general: error.response.data.message });
-      } else {
-        seterrors({ general: "Login failed. Please try again." });
-      }
+      console.error("Login request failed:", error);
+      const msg =
+        error?.response?.data?.message || error.message || "Login failed";
+      seterrors({ general: msg });
     }
   };
 
@@ -119,9 +141,7 @@ function Login() {
                 className={`w-full pl-10 pr-12 px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#1B3C53] outline-none transition duration-150 
                   ${errors.password ? "border-red-500" : "border-gray-300"}`}
                 onChange={(e) => setpassword(e.target.value)}
-                onFocus={() =>
-                  seterrors((prev) => ({ ...prev, password: "" }))
-                }
+                onFocus={() => seterrors((prev) => ({ ...prev, password: "" }))}
               />
               <div
                 className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
@@ -147,6 +167,10 @@ function Login() {
             Sign In
           </button>
         </form>
+
+        {errors.general && (
+          <p className="text-center text-red-500 mt-2">{errors.general}</p>
+        )}
 
         <hr className="border-gray-400" />
 

@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Trash2 } from "lucide-react";
-import axios from "axios";
-import { getToken } from "../utils/cookieUtils";
+import axiosInstance from "../utils/axiosInstance";
 
 function UserList({ type = "instructor", showDelete = true }) {
   const [users, setUsers] = React.useState([]);
@@ -12,46 +11,27 @@ function UserList({ type = "instructor", showDelete = true }) {
       type === "student"
         ? "http://localhost:3001/api/protected/students"
         : "http://localhost:3001/api/protected/instructors";
-    axios
-      .get(endpoint)
+    const path =
+      type === "student" ? "/protected/students" : "/protected/instructors";
+    axiosInstance
+      .get(path)
       .then((res) => setUsers(res.data))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.error(
+          "Failed to load users:",
+          err.response?.data || err.message
+        );
+      });
   }, [type]);
 
   const handleDelete = async (userId, userName) => {
     if (window.confirm(`Are you sure you want to delete ${userName}?`)) {
       setDeletingId(userId);
       try {
-        // Try multiple ways to get the token
-        const token =
-          getToken() ||
-          localStorage.getItem("token") ||
-          document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1];
-
-        console.log(
-          "Token being used:",
-          token ? "Token found" : "No token found"
+        const response = await axiosInstance.delete(
+          `/protected/users/${userId}`
         );
-
-        if (!token) {
-          alert("Authentication token not found. Please login again.");
-          return;
-        }
-
-        const response = await axios.delete(
-          `http://localhost:3001/api/protected/users/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
         if (response.status === 200) {
-          // Remove user from the list
           setUsers((prevUsers) =>
             prevUsers.filter((user) => user._id !== userId)
           );

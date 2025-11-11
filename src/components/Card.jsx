@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { HeartIcon, StarIcon } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { getToken } from "../utils/cookieUtils";
+import axiosInstance from "../utils/axiosInstance";
 
 const Card = ({ title, author, rating, img, hours, category, courseId }) => {
   const [mouseOver, setMouseOver] = useState(false);
@@ -20,52 +20,28 @@ const Card = ({ title, author, rating, img, hours, category, courseId }) => {
     setLoading(true);
 
     try {
-      const token = getToken();
-
       if (inCart) {
         // Remove from cart
-        const response = await fetch(
-          `http://localhost:3001/api/protected/cart/${courseId}`,
-          {
-            method: "DELETE",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (response.ok) {
+        const res = await axiosInstance.delete(`/protected/cart/${courseId}`);
+        if (res.status === 200) {
           setInCart(false);
-          alert("Course removed from cart");
+          alert(res.data?.message || "Course removed from cart");
         } else {
-          alert("Failed to remove course from cart");
+          alert(res.data?.message || "Failed to remove course from cart");
         }
       } else {
         // Add to cart
-        const response = await fetch(
-          "http://localhost:3001/api/protected/cart",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ courseId }),
-          }
-        );
-
-        if (response.ok) {
+        const res = await axiosInstance.post("/protected/cart", { courseId });
+        if (res.status === 200) {
           setInCart(true);
-          alert("Course added to cart");
+          alert(res.data?.message || "Course added to cart");
         } else {
-          const errorData = await response.json();
-          alert(errorData.message || "Failed to add course to cart");
+          alert(res.data?.message || "Failed to add course to cart");
         }
       }
     } catch (error) {
       console.error("Error managing cart:", error);
-      alert("Error managing cart");
+      alert(error?.response?.data?.message || "Error managing cart");
     } finally {
       setLoading(false);
     }

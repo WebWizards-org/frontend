@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { getToken } from "../utils/cookieUtils";
 
 function UpdateCourse() {
   const { id } = useParams();
@@ -15,8 +14,8 @@ function UpdateCourse() {
 
   useEffect(() => {
     // Fetch existing course details
-    axios
-      .get(`http://localhost:3001/api/courses/${id}`)
+    axiosInstance
+      .get(`/courses/${id}`)
       .then((res) => {
         const course = res.data;
         setTitle(course.title || "");
@@ -28,7 +27,7 @@ function UpdateCourse() {
       });
   }, [id]);
 
-  const handleUpdate = (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
     const formdata = new FormData();
     formdata.append("title", title);
@@ -36,23 +35,18 @@ function UpdateCourse() {
     formdata.append("price", price);
     if (file) formdata.append("image", file);
 
-    axios
-      .put(`http://localhost:3001/api/courses/${id}`, formdata, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then(() => {
-        alert("Course updated successfully!");
-        navigate("/dashboard");
-      })
-      .catch((err) => {
-        alert(
-          err.response?.data?.message ||
-            "Error updating course. Please try again."
-        );
+    try {
+      await axiosInstance.put(`/courses/${id}`, formdata, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
+      alert("Course updated successfully!");
+      navigate("/dashboard");
+    } catch (err) {
+      alert(
+        err.response?.data?.message ||
+          "Error updating course. Please try again."
+      );
+    }
   };
 
   return (

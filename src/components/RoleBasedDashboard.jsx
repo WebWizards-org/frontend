@@ -6,7 +6,7 @@ import StudentDashboard from './StudentDashboard';
 
 function RoleBasedDashboard() {
   const { user } = useAuth();
-
+  
   if (!user) {
     return <p>Loading...</p>;
   }

@@ -3,7 +3,7 @@ import { Star, Clock } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
-import { getToken } from "../utils/cookieUtils";
+import axiosInstance from "../utils/axiosInstance";
 
 function ShowCourses() {
   const [courses, setCourses] = useState([]);
@@ -17,10 +17,8 @@ function ShowCourses() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const coursesResponse = await fetch(
-          "http://localhost:3001/api/allCourses"
-        );
-        const coursesData = await coursesResponse.json();
+        const coursesRes = await axiosInstance.get("/allCourses");
+        const coursesData = coursesRes.data;
 
         if (Array.isArray(coursesData)) {
           setCourses(coursesData);
@@ -32,27 +30,20 @@ function ShowCourses() {
 
         if (user) {
           try {
-            const token = getToken();
-            const cartResponse = await fetch(
-              "http://localhost:3001/api/protected/cart",
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-                },
-              }
-            );
-
-            if (cartResponse.ok) {
-              const cartData = await cartResponse.json();
-              setCart(cartData);
-            }
+            const cartRes = await axiosInstance.get("/protected/cart");
+            setCart(Array.isArray(cartRes.data) ? cartRes.data : []);
           } catch (cartError) {
-            console.error("Error fetching cart:", cartError);
+            console.error(
+              "Error fetching cart:",
+              cartError?.response?.data || cartError.message
+            );
           }
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error(
+          "Error fetching data:",
+          error?.response?.data || error.message
+        );
       } finally {
         setLoading(false);
       }
@@ -78,32 +69,22 @@ function ShowCourses() {
     }
 
     try {
-      const token = getToken();
-      if (!token) {
-        alert("Authentication token not found. Please login again.");
-        return;
-      }
-
-      const response = await fetch("http://localhost:3001/api/protected/cart", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ courseId: course._id }),
+      const res = await axiosInstance.post("/protected/cart", {
+        courseId: course._id,
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setCart(data.cart);
-        alert("Course added to cart!");
+      if (res.status === 200) {
+        const data = res.data;
+        setCart(Array.isArray(data.cart) ? data.cart : cart.concat(course));
+        alert(res.data?.message || "Course added to cart!");
       } else {
-        const errorData = await response.json();
-        alert(errorData.message || "Failed to add course to cart");
+        alert(res.data?.message || "Failed to add course to cart");
       }
     } catch (error) {
-      console.error("Error adding to cart:", error);
-      alert("Error adding course to cart: " + error.message);
+      console.error(
+        "Error adding to cart:",
+        error?.response?.data || error.message
+      );
+      alert(error?.response?.data?.message || "Error adding course to cart");
     }
   };
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Trash2, Pencil, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getToken } from "../utils/cookieUtils";
+import axiosInstance from "../utils/axiosInstance";
 
 function InstructorCourseList() {
   const [courses, setCourses] = useState([]);
@@ -15,21 +15,13 @@ function InstructorCourseList() {
 
   const fetchInstructorCourses = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/my-courses", {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setCourses(data);
-      } else {
-        console.error("Failed to fetch courses:", data.message);
-        setCourses([]);
-      }
+      const res = await axiosInstance.get("/my-courses");
+      setCourses(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      console.error("Error fetching courses:", err);
+      console.error(
+        "Error fetching courses:",
+        err?.response?.data || err.message
+      );
       setCourses([]);
     } finally {
       setLoading(false);
@@ -37,25 +29,27 @@ function InstructorCourseList() {
   };
 
   const handleDelete = async (id) => {
+    // validate id before calling backend
+    if (!id || !/^[0-9a-fA-F]{24}$/.test(id)) {
+      alert("Invalid course id");
+      return;
+    }
+
     if (window.confirm("Are you sure you want to delete this course?")) {
       setDeletingId(id);
       try {
-        const res = await fetch(`http://localhost:3001/api/courses/${id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        });
-        const data = await res.json();
-        if (res.ok) {
+        const res = await axiosInstance.delete(`/courses/${id}`);
+        if (res.status === 200) {
           setCourses((prev) => prev.filter((course) => course._id !== id));
         } else {
-          alert(data.message || "Failed to delete course");
+          alert(res.data?.message || "Failed to delete course");
         }
       } catch (err) {
-        alert("Failed to delete course");
+        console.error("Delete error:", err?.response?.data || err.message);
+        alert(err?.response?.data?.message || "Failed to delete course");
+      } finally {
+        setDeletingId(null);
       }
-      setDeletingId(null);
     }
   };
 

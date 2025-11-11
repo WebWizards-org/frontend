@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { CheckCircle, Trash2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { getToken } from "../utils/cookieUtils";
+import axiosInstance from "../utils/axiosInstance";
 
 function Cart() {
   const [cart, setCart] = useState([]);
@@ -15,29 +15,14 @@ function Cart() {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const token = getToken();
-        if (!token || !user) {
+        if (!user) {
+          setCart([]);
           setLoading(false);
           return;
         }
 
-        const response = await fetch(
-          "http://localhost:3001/api/protected/cart",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (response.ok) {
-          const cartData = await response.json();
-          setCart(cartData);
-        } else {
-          console.error("Failed to fetch cart");
-          setCart([]);
-        }
+        const res = await axiosInstance.get("/protected/cart");
+        setCart(Array.isArray(res.data) ? res.data : []);
       } catch (error) {
         console.error("Error fetching cart:", error);
         setCart([]);
@@ -48,32 +33,26 @@ function Cart() {
 
     if (user) {
       fetchCart();
+    } else {
+      // ensure loading is false when no user
+      setLoading(false);
     }
   }, [user]);
 
   const handleRemove = async (courseId) => {
     try {
-      const token = getToken();
-      const response = await fetch(
-        `http://localhost:3001/api/protected/cart/${courseId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setCart(data.cart);
+      const res = await axiosInstance.delete(`/protected/cart/${courseId}`);
+      if (res.status === 200) {
+        // backend returns updated cart
+        setCart(Array.isArray(res.data.cart) ? res.data.cart : []);
       } else {
-        alert("Failed to remove course from cart");
+        alert(res.data?.message || "Failed to remove course from cart");
       }
     } catch (error) {
       console.error("Error removing from cart:", error);
-      alert("Error removing course from cart");
+      alert(
+        error?.response?.data?.message || "Error removing course from cart"
+      );
     }
   };
 
@@ -96,57 +75,33 @@ function Cart() {
     });
 
     try {
-      const token = getToken();
-      console.log("Token for purchase:", token ? "Found" : "Not found");
-
-      const response = await fetch(
-        `http://localhost:3001/api/protected/user/${userId}/purchase`,
+      const res = await axiosInstance.post(
+        `/protected/user/${userId}/purchase`,
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ courseIds }),
+          courseIds,
         }
       );
 
-      console.log("Purchase response status:", response.status);
-
-      const data = await response.json();
-      console.log("Purchase response data:", data);
-
-      if (response.ok) {
+      if (res.status === 200) {
         setShowSuccess(true);
         setTimeout(() => setShowSuccess(false), 3000);
 
-        console.log("Purchase successful, fetching updated cart...");
-
-        // Cart will be automatically cleared by backend, so fetch updated cart
-        const cartResponse = await fetch(
-          "http://localhost:3001/api/protected/cart",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (cartResponse.ok) {
-          const updatedCart = await cartResponse.json();
-          console.log("Updated cart after purchase:", updatedCart);
-          setCart(updatedCart);
-        } else {
-          console.error("Failed to fetch updated cart:", cartResponse.status);
+        // fetch updated cart (backend should return cleared cart)
+        try {
+          const cartRes = await axiosInstance.get("/protected/cart");
+          setCart(Array.isArray(cartRes.data) ? cartRes.data : []);
+        } catch (err) {
+          console.error("Failed to fetch updated cart:", err);
+          setCart([]);
         }
       } else {
-        console.error("Purchase failed:", data);
-        alert("Error: " + (data.message || "Purchase failed"));
+        alert(res.data?.message || "Purchase failed");
       }
     } catch (error) {
       console.error("Network error during purchase:", error);
-      alert("Network error: " + error.message);
+      alert(
+        error?.response?.data?.message || "Network error: " + error.message
+      );
     }
   };
 

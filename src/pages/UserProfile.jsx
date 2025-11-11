@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { getToken } from "../utils/cookieUtils";
 import { useAuth } from "../context/AuthContext";
+import axiosInstance from "../utils/axiosInstance";
 
 function UserProfile() {
   const { id } = useParams();
@@ -36,51 +36,51 @@ function UserProfile() {
       try {
         setLoading(true);
 
-        // Fetch user profile
-        const userResponse = await fetch(
-          `http://localhost:3001/api/protected/user/${profileUserId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${getToken()}`,
-              "Content-Type": "application/json",
-            },
-          }
+        const userRes = await axiosInstance.get(
+          `/protected/user/${profileUserId}`
         );
-
-        if (!userResponse.ok) {
-          throw new Error("Failed to fetch user data");
-        }
-
-        const userData = await userResponse.json();
-        setUser(userData);
+        setUser(userRes.data);
 
         // If user is an instructor, fetch their courses
-        if (userData.role === "instructor") {
+        if (userRes.data?.role === "instructor") {
           try {
-            // If viewing current user's profile, use my-courses endpoint
-            // Otherwise, fetch courses by instructor ID
-            const coursesEndpoint =
-              !id || id === currentUser?._id
-                ? "http://localhost:3001/api/my-courses"
-                : `http://localhost:3001/api/courses/instructor/${profileUserId}`;
-
-            const coursesResponse = await fetch(coursesEndpoint, {
-              headers: {
-                Authorization: `Bearer ${getToken()}`,
-                "Content-Type": "application/json",
-              },
-            });
-
-            if (coursesResponse.ok) {
-              const coursesData = await coursesResponse.json();
-              setUserCourses(coursesData);
+            const coursesRes = await axiosInstance.get(
+              `/courses/instructor/${profileUserId}`
+            );
+            setUserCourses(
+              Array.isArray(coursesRes.data) ? coursesRes.data : []
+            );
+          } catch (err) {
+            // If 401, try a plain fetch (no auth header) in case backend has a public route
+            if (err?.response?.status === 401) {
+              try {
+                const res = await fetch(
+                  `http://localhost:3001/api/courses/instructor/${profileUserId}`
+                );
+                if (res.ok) {
+                  const data = await res.json();
+                  setUserCourses(Array.isArray(data) ? data : []);
+                } else {
+                  setUserCourses([]);
+                }
+              } catch {
+                setUserCourses([]);
+              }
+            } else {
+              setUserCourses([]);
             }
-          } catch (coursesError) {
-            console.error("Error fetching instructor courses:", coursesError);
           }
         }
       } catch (err) {
-        setError(err.message);
+        console.error(
+          "Error fetching user data:",
+          err?.response?.data || err.message
+        );
+        setError(
+          err?.response?.data?.message ||
+            err.message ||
+            "Failed to fetch user data"
+        );
       } finally {
         setLoading(false);
       }

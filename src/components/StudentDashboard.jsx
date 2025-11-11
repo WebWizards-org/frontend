@@ -16,7 +16,7 @@ import { useNavigate, Link } from "react-router-dom";
 import DashCard from "./DashCard";
 import Cart from "../pages/Cart";
 import StudentCourseList from "./StudentCourseList";
-import { getToken } from "../utils/cookieUtils";
+import axiosInstance from "../utils/axiosInstance";
 
 function StudentDashboard() {
   const { user, logout } = useAuth();
@@ -29,36 +29,20 @@ function StudentDashboard() {
   useEffect(() => {
     const fetchPurchasedCoursesCount = async () => {
       try {
-        const token = getToken();
-        if (!token) {
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch(
-          "http://localhost:3001/api/protected/student/courses",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (response.ok) {
-          const courses = await response.json();
-          setPurchasedCoursesCount(courses.length);
-        }
+        const res = await axiosInstance.get("/protected/student/courses");
+        const courses = res.data;
+        setPurchasedCoursesCount(Array.isArray(courses) ? courses.length : 0);
       } catch (error) {
-        console.error("Error fetching purchased courses count:", error);
+        console.error(
+          "Error fetching purchased courses count:",
+          error?.response?.data || error.message
+        );
       } finally {
         setLoading(false);
       }
     };
 
-    if (user) {
-      fetchPurchasedCoursesCount();
-    }
+    if (user) fetchPurchasedCoursesCount();
   }, [user]);
 
   const handleLogout = () => {

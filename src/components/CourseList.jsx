@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Trash2, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UpdateCourse from "../pages/Updatecourse";
-import { getToken } from "../utils/cookieUtils";
+import axiosInstance from "../utils/axiosInstance";
+
 function CourseList({ showEdit = true }) {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,9 +11,11 @@ function CourseList({ showEdit = true }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/allCourses")
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchCourses = async () => {
+      try {
+        setLoading(true);
+        const res = await axiosInstance.get("/allCourses");
+        const data = res.data;
         if (Array.isArray(data)) {
           setCourses(data);
         } else if (data && Array.isArray(data.courses)) {
@@ -20,33 +23,38 @@ function CourseList({ showEdit = true }) {
         } else {
           setCourses([]);
         }
+      } catch (err) {
+        console.error(
+          "Failed to load courses:",
+          err?.response?.data || err.message
+        );
+        setCourses([]);
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchCourses();
   }, []);
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this course?")) {
-      setDeletingId(id);
-      try {
-        const res = await fetch(`http://localhost:3001/api/courses/${id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setCourses((prev) => prev.filter((course) => course._id !== id));
-        } else {
-          alert(data.message || "Failed to delete course");
-        }
-      } catch (err) {
-        alert("Failed to delete course");
+    if (!window.confirm("Are you sure you want to delete this course?")) return;
+
+    setDeletingId(id);
+    try {
+      const res = await axiosInstance.delete(`/courses/${id}`);
+      if (res.status === 200) {
+        setCourses((prev) => prev.filter((course) => course._id !== id));
+      } else {
+        alert(res.data?.message || "Failed to delete course");
       }
+    } catch (err) {
+      console.error(
+        "Failed to delete course:",
+        err?.response?.data || err.message
+      );
+      alert(err?.response?.data?.message || "Failed to delete course");
+    } finally {
       setDeletingId(null);
     }
   };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BookOpen, Star, Clock, User } from "lucide-react";
-import { getToken } from "../utils/cookieUtils";
+import axiosInstance from "../utils/axiosInstance";
 
 function StudentCourseList() {
   const [courses, setCourses] = useState([]);
@@ -9,35 +9,22 @@ function StudentCourseList() {
 
   useEffect(() => {
     const fetchPurchasedCourses = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        setLoading(true);
-        const token = getToken();
-
-        if (!token) {
-          setError("Authentication required");
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch(
-          "http://localhost:3001/api/protected/student/courses",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch courses: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setCourses(data);
+        const res = await axiosInstance.get("/protected/student/courses");
+        setCourses(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
-        console.error("Error fetching purchased courses:", err);
-        setError(err.message);
+        const status = err?.response?.status;
+        if (status === 401) {
+          setError("Authentication required");
+        } else {
+          setError(
+            err?.response?.data?.message ||
+              err.message ||
+              "Failed to fetch courses"
+          );
+        }
       } finally {
         setLoading(false);
       }

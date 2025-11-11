@@ -14,7 +14,7 @@ import { useNavigate, Link } from "react-router-dom";
 import DashCard from "./DashCard";
 import UserList from "./UserList";
 import CourseList from "./CourseList";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
 
 function AdminDashboard() {
   const { user, logout } = useAuth();
@@ -28,24 +28,30 @@ function AdminDashboard() {
 
   useEffect(() => {
     // Fetch students count
-    axios
-      .get("http://localhost:3001/api/protected/students")
-      .then((res) => setStudentCount(res.data.length))
+    axiosInstance
+      .get("/protected/students")
+      .then((res) =>
+        setStudentCount(Array.isArray(res.data) ? res.data.length : 0)
+      )
       .catch(() => setStudentCount(0));
+
     // Fetch instructors count
-    axios
-      .get("http://localhost:3001/api/protected/instructors")
-      .then((res) => setInstructorCount(res.data.length))
+    axiosInstance
+      .get("/protected/instructors")
+      .then((res) =>
+        setInstructorCount(Array.isArray(res.data) ? res.data.length : 0)
+      )
       .catch(() => setInstructorCount(0));
+
     // Fetch courses count
-    axios
-      .get("http://localhost:3001/api/allCourses")
+    axiosInstance
+      .get("/allCourses")
       .then((res) => {
-        if (Array.isArray(res.data)) {
-          setCourseCount(res.data.length);
-        } else if (res.data && Array.isArray(res.data.courses)) {
-          setCourseCount(res.data.courses.length);
-        }
+        const data = res.data;
+        if (Array.isArray(data)) return setCourseCount(data.length);
+        if (data && Array.isArray(data.courses))
+          return setCourseCount(data.courses.length);
+        setCourseCount(0);
       })
       .catch(() => setCourseCount(0));
   }, []);
@@ -109,11 +115,8 @@ function AdminDashboard() {
           icon={<CircleUser size={20} />}
           text="Profile"
           onClick={() => {
-            console.log("Profile clicked in AdminDashboard");
             const userId = user?._id || user?.id;
-            if (userId) {
-              navigate(`/user/${userId}`);
-            }
+            if (userId) navigate(`/user/${userId}`);
           }}
         />
         <SidebarItem
