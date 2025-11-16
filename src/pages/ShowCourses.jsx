@@ -7,11 +7,10 @@ import axiosInstance from "../utils/axiosInstance";
 
 function ShowCourses() {
   const [courses, setCourses] = useState([]);
-  const [cart, setCart] = useState(() => {
-    const saved = localStorage.getItem("cart");
-    return saved ? JSON.parse(saved) : [];
-  });
+  // don't initialize cart from localStorage — use backend as source of truth
+  const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [addingId, setAddingId] = useState(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -32,18 +31,15 @@ function ShowCourses() {
           try {
             const cartRes = await axiosInstance.get("/protected/cart");
             setCart(Array.isArray(cartRes.data) ? cartRes.data : []);
-          } catch (cartError) {
-            console.error(
-              "Error fetching cart:",
-              cartError?.response?.data || cartError.message
-            );
+          } catch {
+            // ignore cart fetch errors; leave cart empty
+            setCart([]);
           }
+        } else {
+          setCart([]);
         }
-      } catch (error) {
-        console.error(
-          "Error fetching data:",
-          error?.response?.data || error.message
-        );
+      } catch {
+        setCourses([]);
       } finally {
         setLoading(false);
       }
@@ -52,39 +48,64 @@ function ShowCourses() {
     fetchData();
   }, [user]);
 
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+  const refetchCartFromBackend = async () => {
+    try {
+      const res = await axiosInstance.get("/protected/cart");
+      if (res.status === 200 && Array.isArray(res.data)) {
+        setCart(res.data);
+        return res.data;
+      }
+    } catch {
+      // ignore
+    }
+    return null;
+  };
 
   const handleAddToCart = async (course) => {
     if (!user) {
-      alert("Please login to add courses to cart");
+      window.location.href = "/login";
       return;
     }
 
-    const courseInCart = cart.find((item) => item._id === course._id);
-    if (courseInCart) {
+    // If backend already has this item, don't modify frontend optimistically
+    const alreadyInCart = cart.some(
+      (c) => (c._id && c._id === course._id) || String(c) === String(course._id)
+    );
+    if (alreadyInCart) {
       alert("Course already in cart!");
       return;
     }
 
+    setAddingId(course._id);
     try {
-      const res = await axiosInstance.post("/protected/cart", {
+      const res = await axiosInstance.post("/cart/addToCart", {
         courseId: course._id,
       });
-      if (res.status === 200) {
-        const data = res.data;
-        setCart(Array.isArray(data.cart) ? data.cart : cart.concat(course));
+
+      if (res?.status === 200) {
+        // update frontend only from backend authoritative response
+        const returned = res.data?.cart;
+        if (Array.isArray(returned)) {
+          setCart(returned);
+        } else {
+          // if backend didn't return cart, re-fetch to sync state
+          await refetchCartFromBackend();
+        }
         alert(res.data?.message || "Course added to cart!");
       } else {
+        await refetchCartFromBackend();
         alert(res.data?.message || "Failed to add course to cart");
       }
     } catch (error) {
-      console.error(
-        "Error adding to cart:",
-        error?.response?.data || error.message
-      );
-      alert(error?.response?.data?.message || "Error adding course to cart");
+      // surface backend message, then sync frontend with backend
+      const msg =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Error adding course to cart";
+      alert(msg);
+      await refetchCartFromBackend();
+    } finally {
+      setAddingId(null);
     }
   };
 
@@ -151,14 +172,7 @@ function ShowCourses() {
                       src={`http://localhost:3001/images/${course.image}`}
                       alt={course.title || "Course"}
                       className="w-full h-full object-cover"
-                      onLoad={(e) => {
-                        console.log(
-                          `✅ Image loaded successfully: ${e.target.src}`
-                        );
-                      }}
                       onError={(e) => {
-                        console.log(`❌ Failed to load: ${e.target.src}`);
-                        // Show fallback
                         e.target.style.display = "none";
                         const fallback =
                           e.target.parentNode.querySelector(".fallback-image");
@@ -216,8 +230,9 @@ function ShowCourses() {
                   <button
                     className="bg-blue-700 text-white px-5 py-2 mt-4 rounded-md w-full hover:bg-blue-800 transition duration-200"
                     onClick={() => handleAddToCart(course)}
+                    disabled={addingId === course._id}
                   >
-                    Add to cart
+                    {addingId === course._id ? "Adding..." : "Add to cart"}
                   </button>
                 </div>
               </div>

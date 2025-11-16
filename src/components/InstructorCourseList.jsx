@@ -28,6 +28,11 @@ function InstructorCourseList() {
     }
   };
 
+  // navigate to /lecture and pass courseId via navigation state
+  const handleAddLecture = (courseId) => {
+    navigate("/lecture", { state: { courseId } });
+  };
+
   const handleDelete = async (id) => {
     // validate id before calling backend
     if (!id || !/^[0-9a-fA-F]{24}$/.test(id)) {
@@ -115,6 +120,14 @@ function InstructorCourseList() {
               </div>
 
               <div className="flex justify-end gap-2 mt-4">
+                <button
+                  onClick={() => handleAddLecture(course._id)}
+                  className="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded transition flex items-center gap-1"
+                  title="Add Lecture"
+                >
+                  <Plus size={16} />
+                  Add Lecture
+                </button>
                 <button
                   onClick={() => handleEdit(course._id)}
                   className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-3 py-1 rounded transition flex items-center gap-1"

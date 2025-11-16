@@ -12,7 +12,6 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    // temporary debug
     console.debug(
       "[axios] request:",
       config.method?.toUpperCase(),
@@ -26,6 +25,19 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+const handleAuthFailure = () => {
+  try {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  } catch (e) {
+    // ignore storage errors
+  }
+  // redirect to login
+  if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+    window.location.href = "/login";
+  }
+};
 
 axiosInstance.interceptors.response.use(
   (response) => {
@@ -43,6 +55,22 @@ axiosInstance.interceptors.response.use(
       error?.response?.status,
       error?.response?.data
     );
+
+    const status = error?.response?.status;
+    const message = String(error?.response?.data?.message || "").toLowerCase();
+
+    // If unauthorized or token-related error, clear auth and redirect to login
+    if (
+      status === 401 ||
+      message.includes("token") ||
+      message.includes("expired") ||
+      message.includes("jwt") ||
+      message.includes("authentication required") ||
+      message.includes("unauthorized")
+    ) {
+      handleAuthFailure();
+    }
+
     return Promise.reject(error);
   }
 );

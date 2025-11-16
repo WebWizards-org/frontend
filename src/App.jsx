@@ -23,6 +23,7 @@ import ShowCourses from "./pages/ShowCourses.jsx";
 import UpdateCourse from "./pages/Updatecourse";
 import UserProfile from "./pages/UserProfile";
 import Cart from "./pages/Cart";
+import LectureForm from "./pages/Lecture.jsx";
 
 const ProtectedRoute = ({ children }) => {
   const { token, isLoading } = useAuth();
@@ -107,6 +108,7 @@ function App() {
             }
           />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/lecture" element={<LectureForm />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
